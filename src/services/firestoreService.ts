@@ -5,19 +5,81 @@ import {
   deleteDoc, 
   onSnapshot, 
   getDocs,
-  writeBatch
+  writeBatch,
+  getDocFromServer
 } from 'firebase/firestore';
-import { db } from '../lib/firebase';
+import { db, auth } from '../lib/firebase';
 import { Transaction, BudgetConfig } from '../types';
 
+export enum OperationType {
+  CREATE = 'create',
+  UPDATE = 'update',
+  DELETE = 'delete',
+  LIST = 'list',
+  GET = 'get',
+  WRITE = 'write',
+}
+
+export interface FirestoreErrorInfo {
+  error: string;
+  operationType: OperationType;
+  path: string | null;
+  authInfo: {
+    userId?: string | null;
+    email?: string | null;
+    emailVerified?: boolean | null;
+    isAnonymous?: boolean | null;
+    tenantId?: string | null;
+    providerInfo?: {
+      providerId?: string | null;
+      email?: string | null;
+    }[];
+  };
+}
+
+export function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
+  const errInfo: FirestoreErrorInfo = {
+    error: error instanceof Error ? error.message : String(error),
+    authInfo: {
+      userId: auth.currentUser?.uid,
+      email: auth.currentUser?.email,
+      emailVerified: auth.currentUser?.emailVerified,
+      isAnonymous: auth.currentUser?.isAnonymous,
+      tenantId: auth.currentUser?.tenantId,
+      providerInfo: auth.currentUser?.providerData?.map((provider) => ({
+        providerId: provider.providerId,
+        email: provider.email,
+      })) || []
+    },
+    operationType,
+    path
+  };
+  console.error('Firestore Error: ', JSON.stringify(errInfo));
+  throw new Error(JSON.stringify(errInfo));
+}
+
 /**
- * Subscribe to the real-time transactions collection for an authenticated user.
+ * Test connectivity to Firestore on boot
+ */
+export async function testFirestoreConnection(userId: string): Promise<void> {
+  try {
+    await getDocFromServer(doc(db, 'users', userId));
+  } catch (error) {
+    if (error instanceof Error && error.message.includes('the client is offline')) {
+      console.warn('Firestore connectivity check: client is offline or starting up.');
+    }
+  }
+}
+
+/**
+ * Subscribe directly to the real-time transactions for an authenticated user.
  */
 export function subscribeToTransactions(
   userId: string,
   onUpdate: (transactions: Transaction[]) => void,
   onError?: (error: Error) => void
 ) {
+  const path = `users/${userId}/transactions`;
   const txCollectionRef = collection(db, 'users', userId, 'transactions');
   
   return onSnapshot(
@@ -37,38 +99,53 @@ export function subscribeToTransactions(
     },
     (err) => {
       console.error('Firestore transactions subscription error:', err);
-      if (onError) onError(err);
+      if (onError) {
+        onError(err);
+      } else {
+        handleFirestoreError(err, OperationType.GET, path);
+      }
     }
   );
 }
 
 /**
- * Save or update a single transaction in Firestore
+ * Directly save or update a single transaction in Firestore for an authenticated user.
  */
 export async function saveTransactionToFirestore(userId: string, transaction: Transaction): Promise<void> {
-  const txDocRef = doc(db, 'users', userId, 'transactions', transaction.id);
-  await setDoc(txDocRef, {
-    ...transaction,
-    updatedAt: new Date().toISOString()
-  });
+  const path = `users/${userId}/transactions/${transaction.id}`;
+  try {
+    const txDocRef = doc(db, 'users', userId, 'transactions', transaction.id);
+    await setDoc(txDocRef, {
+      ...transaction,
+      updatedAt: new Date().toISOString()
+    });
+  } catch (err) {
+    handleFirestoreError(err, OperationType.WRITE, path);
+  }
 }
 
 /**
- * Delete a transaction from Firestore
+ * Directly delete a transaction from Firestore for an authenticated user.
  */
 export async function deleteTransactionFromFirestore(userId: string, transactionId: string): Promise<void> {
-  const txDocRef = doc(db, 'users', userId, 'transactions', transactionId);
-  await deleteDoc(txDocRef);
+  const path = `users/${userId}/transactions/${transactionId}`;
+  try {
+    const txDocRef = doc(db, 'users', userId, 'transactions', transactionId);
+    await deleteDoc(txDocRef);
+  } catch (err) {
+    handleFirestoreError(err, OperationType.DELETE, path);
+  }
 }
 
 /**
- * Subscribe to the user's budget configuration
+ * Subscribe directly to the user's budget configuration from Firestore.
  */
 export function subscribeToBudgetConfig(
   userId: string,
   onUpdate: (config: BudgetConfig | null) => void,
   onError?: (error: Error) => void
 ) {
+  const path = `users/${userId}/budget/current`;
   const budgetDocRef = doc(db, 'users', userId, 'budget', 'current');
   
   return onSnapshot(
@@ -83,112 +160,56 @@ export function subscribeToBudgetConfig(
     },
     (err) => {
       console.error('Firestore budget subscription error:', err);
-      if (onError) onError(err);
+      if (onError) {
+        onError(err);
+      } else {
+        handleFirestoreError(err, OperationType.GET, path);
+      }
     }
   );
 }
 
 /**
- * Save the user's budget configuration
+ * Directly save the user's budget configuration to Firestore.
  */
 export async function saveBudgetConfigToFirestore(userId: string, config: BudgetConfig): Promise<void> {
-  const budgetDocRef = doc(db, 'users', userId, 'budget', 'current');
-  await setDoc(budgetDocRef, {
-    ...config,
-    updatedAt: new Date().toISOString()
-  });
-}
-
-/**
- * Seed initial transactions and budget into Firestore if user's account is empty
- */
-export async function seedInitialFirestoreData(
-  userId: string, 
-  initialTransactions: Transaction[],
-  initialBudget: BudgetConfig
-): Promise<void> {
-  if (initialTransactions.length === 0) return;
-  const txCollectionRef = collection(db, 'users', userId, 'transactions');
-  const existingDocs = await getDocs(txCollectionRef);
-  
-  if (existingDocs.empty) {
-    const batch = writeBatch(db);
-    for (const tx of initialTransactions) {
-      const docRef = doc(db, 'users', userId, 'transactions', tx.id);
-      batch.set(docRef, {
-        ...tx,
-        updatedAt: new Date().toISOString()
-      });
-    }
+  const path = `users/${userId}/budget/current`;
+  try {
     const budgetDocRef = doc(db, 'users', userId, 'budget', 'current');
-    batch.set(budgetDocRef, {
-      ...initialBudget,
+    await setDoc(budgetDocRef, {
+      ...config,
       updatedAt: new Date().toISOString()
     });
-    await batch.commit();
+  } catch (err) {
+    handleFirestoreError(err, OperationType.WRITE, path);
   }
 }
 
 /**
- * Automatically clean legacy dummy transactions from Firestore
+ * Clear all user transactions and reset budget in Firestore for an authenticated user.
  */
-export async function cleanLegacyDummyData(userId: string): Promise<void> {
+export async function clearAllUserDataInFirestore(
+  userId: string,
+  emptyBudget: BudgetConfig
+): Promise<void> {
+  const path = `users/${userId}/transactions`;
   try {
     const txCollectionRef = collection(db, 'users', userId, 'transactions');
     const existingDocs = await getDocs(txCollectionRef);
+    
     const batch = writeBatch(db);
-    let count = 0;
     existingDocs.forEach((docSnap) => {
-      const id = docSnap.id;
-      if (
-        id.startsWith('tx-202604-') ||
-        id.startsWith('tx-202605-') ||
-        id.startsWith('tx-202606-') ||
-        id.startsWith('tx-202607-') ||
-        id.startsWith('tx-202608-') ||
-        id.startsWith('tx-202609-')
-      ) {
-        batch.delete(docSnap.ref);
-        count++;
-      }
+      batch.delete(docSnap.ref);
     });
-    if (count > 0) {
-      await batch.commit();
-    }
-  } catch (e) {
-    console.error('Error cleaning legacy dummy data in Firestore:', e);
-  }
-}
 
-/**
- * Reset all user transactions and budget in Firestore back to the initial dataset
- */
-export async function resetFirestoreData(
-  userId: string,
-  initialTransactions: Transaction[],
-  initialBudget: BudgetConfig
-): Promise<void> {
-  const txCollectionRef = collection(db, 'users', userId, 'transactions');
-  const existingDocs = await getDocs(txCollectionRef);
-  
-  const batch = writeBatch(db);
-  existingDocs.forEach((docSnap) => {
-    batch.delete(docSnap.ref);
-  });
-
-  for (const tx of initialTransactions) {
-    const docRef = doc(db, 'users', userId, 'transactions', tx.id);
-    batch.set(docRef, {
-      ...tx,
+    const budgetDocRef = doc(db, 'users', userId, 'budget', 'current');
+    batch.set(budgetDocRef, {
+      ...emptyBudget,
       updatedAt: new Date().toISOString()
     });
+
+    await batch.commit();
+  } catch (err) {
+    handleFirestoreError(err, OperationType.WRITE, path);
   }
-
-  const budgetDocRef = doc(db, 'users', userId, 'budget', 'current');
-  batch.set(budgetDocRef, {
-    ...initialBudget,
-    updatedAt: new Date().toISOString()
-  });
-
-  await batch.commit();
 }

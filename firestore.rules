@@ -2,6 +2,11 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
+    // Default-deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
     // Helper function to verify user is authenticated
     function isAuthenticated() {
       return request.auth != null;
@@ -12,16 +17,16 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.uid == userId;
     }
 
-    // User profiles
+    // User profiles and partitioned data subcollections
     match /users/{userId} {
       allow read, write: if isOwner(userId);
       
-      // User transactions collection
+      // User transactions collection - only owner can read and write
       match /transactions/{transactionId} {
         allow read, write: if isOwner(userId);
       }
       
-      // User budget configuration
+      // User budget configuration - only owner can read and write
       match /budget/{budgetId} {
         allow read, write: if isOwner(userId);
       }

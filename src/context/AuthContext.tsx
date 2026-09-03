@@ -8,6 +8,7 @@ import {
 } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, googleProvider, db } from '../lib/firebase';
+import { handleFirestoreError, OperationType } from '../services/firestoreService';
 
 interface AuthContextType {
   currentUser: User | null;
@@ -42,14 +43,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
         setLoading(false);
       } else {
-        // Automatically sign in anonymously to guarantee total Firebase backing
-        try {
-          await signInAnonymously(auth);
-        } catch (e) {
-          console.warn('Auto Firebase sign-in warning:', e);
-          setCurrentUser(null);
-          setLoading(false);
-        }
+        // User is not authenticated; show marketing / sign-in screen
+        setCurrentUser(null);
+        setLoading(false);
       }
     });
 
@@ -61,7 +57,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await signInWithPopup(auth, googleProvider);
     } catch (err: any) {
       console.error('Google Sign-In Error:', err);
-      // If popup fails (e.g. blocked in iframe), provide fallback or throw
       throw err;
     }
   };
@@ -70,7 +65,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       await signInAnonymously(auth);
     } catch (err: any) {
-      console.error('Anonymous Sign-In Error:', err);
+      console.error('Guest Sign-In Error:', err);
       throw err;
     }
   };
@@ -78,6 +73,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     try {
       await signOut(auth);
+      setCurrentUser(null);
     } catch (err: any) {
       console.error('Logout Error:', err);
       throw err;

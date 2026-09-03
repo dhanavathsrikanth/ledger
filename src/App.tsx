@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Transaction, 
   BudgetConfig, 
   ActiveTab 
 } from './types';
-import { INITIAL_TRANSACTIONS, INITIAL_BUDGET_CONFIG } from './data/initialData';
+import { INITIAL_BUDGET_CONFIG } from './data/initialData';
 import { 
   calculateMonthlyStats, 
   getMonthTrends, 
@@ -21,16 +21,16 @@ import { RecentTransactions } from './components/RecentTransactions';
 import { BudgetInsightsTab } from './components/BudgetInsightsTab';
 import { TransactionModal } from './components/TransactionModal';
 import { BudgetModal } from './components/BudgetModal';
+import { MarketingPage } from './components/MarketingPage';
 import { 
   CheckCircle, 
   Info, 
   Plus, 
-  Cloud, 
-  Database,
   LayoutDashboard,
   ReceiptText,
   PieChart,
-  Target
+  Target,
+  Loader2
 } from 'lucide-react';
 import { useAuth } from './context/AuthContext';
 import { 
@@ -39,72 +39,19 @@ import {
   saveTransactionToFirestore, 
   deleteTransactionFromFirestore, 
   saveBudgetConfigToFirestore,
-  seedInitialFirestoreData,
-  cleanLegacyDummyData,
-  resetFirestoreData
+  clearAllUserDataInFirestore,
+  testFirestoreConnection
 } from './services/firestoreService';
 
 const now = new Date();
 const CURRENT_YEAR_MONTH = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-const STORAGE_KEY_TRANSACTIONS = 'expense_tracker_txs_clean_v1';
-const STORAGE_KEY_BUDGET = 'expense_tracker_budget_clean_v1';
-
-const isLegacyDummyTx = (t: Transaction): boolean => {
-  if (!t || typeof t.id !== 'string') return false;
-  return (
-    t.id.startsWith('tx-202604-') ||
-    t.id.startsWith('tx-202605-') ||
-    t.id.startsWith('tx-202606-') ||
-    t.id.startsWith('tx-202607-') ||
-    t.id.startsWith('tx-202608-') ||
-    t.id.startsWith('tx-202609-')
-  );
-};
 
 export default function App() {
-  const { currentUser, loading: authLoading } = useAuth();
+  const { currentUser, loading: authLoading, signInWithGoogle, signInGuest } = useAuth();
   
-  // Local state initialized from localStorage
-  const [transactions, setTransactions] = useState<Transaction[]>(() => {
-    try {
-      // Clear legacy storage keys if present
-      localStorage.removeItem('expense_tracker_txs_inr_v1');
-      localStorage.removeItem('expense_tracker_txs_inr_v2');
-      localStorage.removeItem('expense_tracker_budget_inr_v1');
-      localStorage.removeItem('expense_tracker_budget_inr_v2');
-
-      const saved = localStorage.getItem(STORAGE_KEY_TRANSACTIONS);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) {
-          return parsed.filter((t) => !isLegacyDummyTx(t));
-        }
-      }
-    } catch (e) {
-      console.error('Error reading saved transactions', e);
-    }
-    return INITIAL_TRANSACTIONS;
-  });
-
-  const [budgetConfig, setBudgetConfig] = useState<BudgetConfig>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY_BUDGET);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed && typeof parsed.overallBudget === 'number') {
-          if (parsed.overallBudget === 75000 && parsed.categoryLimits?.housing === 25000) {
-            return INITIAL_BUDGET_CONFIG;
-          }
-          return parsed;
-        }
-      }
-    } catch (e) {
-      console.error('Error reading saved budget config', e);
-    }
-    return INITIAL_BUDGET_CONFIG;
-  });
-
-  const [isSyncing, setIsSyncing] = useState(false);
+  // Transactions and Budget are stored directly in Firebase Firestore
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [budgetConfig, setBudgetConfig] = useState<BudgetConfig>(INITIAL_BUDGET_CONFIG);
   const [currentMonthKey, setCurrentMonthKey] = useState<string>(CURRENT_YEAR_MONTH);
   const [activeTab, setActiveTab] = useState<ActiveTab>('dashboard');
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
@@ -121,79 +68,60 @@ export default function App() {
     }, 3200);
   };
 
-  // Synchronize with Firestore when user is logged in
+  // Direct Firestore synchronization for authenticated user
   useEffect(() => {
-    if (!currentUser) return;
+    if (!currentUser) {
+      setTransactions([]);
+      setBudgetConfig(INITIAL_BUDGET_CONFIG);
+      return;
+    }
 
-    let unsubTxs: (() => void) | undefined;
-    let unsubBudget: (() => void) | undefined;
+    // Clean any prior local storage caches to enforce pure cloud storage
+    try {
+      localStorage.removeItem('expense_tracker_txs_clean_v1');
+      localStorage.removeItem('expense_tracker_budget_clean_v1');
+      localStorage.removeItem('expense_tracker_txs_inr_v1');
+      localStorage.removeItem('expense_tracker_txs_inr_v2');
+      localStorage.removeItem('expense_tracker_budget_inr_v1');
+      localStorage.removeItem('expense_tracker_budget_inr_v2');
+    } catch (e) {
+      // Ignore storage cleanup issues
+    }
 
-    const setupFirestoreSync = async () => {
-      setIsSyncing(true);
-      try {
-        // Automatically purge any dummy legacy transactions from user's Firestore
-        await cleanLegacyDummyData(currentUser.uid);
+    // Test connectivity per skill requirements
+    testFirestoreConnection(currentUser.uid);
 
-        // Subscribe to real-time transactions
-        unsubTxs = subscribeToTransactions(
-          currentUser.uid,
-          (cloudTxs) => {
-            const cleanTxs = cloudTxs.filter((t) => !isLegacyDummyTx(t));
-            setTransactions(cleanTxs);
-            setIsSyncing(false);
-          },
-          (err) => {
-            console.error('Failed to sync transactions from Firestore:', err);
-            setIsSyncing(false);
-          }
-        );
-
-        // Subscribe to real-time budget
-        unsubBudget = subscribeToBudgetConfig(
-          currentUser.uid,
-          (cloudBudget) => {
-            if (cloudBudget) {
-              if (cloudBudget.overallBudget === 75000 && cloudBudget.categoryLimits?.housing === 25000) {
-                setBudgetConfig(INITIAL_BUDGET_CONFIG);
-              } else {
-                setBudgetConfig(cloudBudget);
-              }
-            }
-          },
-          (err) => {
-            console.error('Failed to sync budget from Firestore:', err);
-          }
-        );
-      } catch (err) {
-        console.error('Error establishing Firestore listeners:', err);
-        setIsSyncing(false);
+    // Subscribe to the authenticated user's real-time transactions in Firestore
+    const unsubTxs = subscribeToTransactions(
+      currentUser.uid,
+      (cloudTxs) => {
+        setTransactions(cloudTxs);
+      },
+      (err) => {
+        console.error('Firestore transactions subscription error:', err);
       }
-    };
+    );
 
-    setupFirestoreSync();
+    // Subscribe to the authenticated user's budget config in Firestore
+    const unsubBudget = subscribeToBudgetConfig(
+      currentUser.uid,
+      (cloudBudget) => {
+        if (cloudBudget) {
+          setBudgetConfig(cloudBudget);
+        } else {
+          setBudgetConfig(INITIAL_BUDGET_CONFIG);
+        }
+      },
+      (err) => {
+        console.error('Firestore budget subscription error:', err);
+      }
+    );
 
     return () => {
-      if (unsubTxs) unsubTxs();
-      if (unsubBudget) unsubBudget();
+      unsubTxs();
+      unsubBudget();
     };
   }, [currentUser]);
-
-  // Local storage backup
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY_TRANSACTIONS, JSON.stringify(transactions));
-    } catch (e) {
-      console.error('Error saving transactions to localStorage', e);
-    }
-  }, [transactions]);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY_BUDGET, JSON.stringify(budgetConfig));
-    } catch (e) {
-      console.error('Error saving budget config to localStorage', e);
-    }
-  }, [budgetConfig]);
 
   // Calculate monthly stats
   const monthlyStats = useMemo(() => {
@@ -222,57 +150,56 @@ export default function App() {
     return Array.from(set).sort().reverse();
   }, [transactions]);
 
-  // Transaction handlers
+  // Save Transaction directly to Firebase Firestore
   const handleSaveTransaction = async (
     txData: Omit<Transaction, 'id'>,
     existingId?: string
   ) => {
+    if (!currentUser) return;
+
     let savedTx: Transaction;
     if (existingId) {
       savedTx = { ...txData, id: existingId };
+      // Optimistic update
       setTransactions((prev) =>
         prev.map((t) => (t.id === existingId ? savedTx : t))
       );
-      showToast('Transaction updated successfully');
+      showToast('Transaction updated');
     } else {
       savedTx = {
         ...txData,
-        id: `tx-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        id: `tx-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       };
+      // Optimistic update
       setTransactions((prev) => [savedTx, ...prev]);
       showToast(`Recorded ${txData.type === 'income' ? 'income' : 'expense'}: ${txData.title}`);
     }
 
-    // Persist to Firestore if authenticated
-    if (currentUser) {
-      try {
-        setIsSyncing(true);
-        await saveTransactionToFirestore(currentUser.uid, savedTx);
-        setIsSyncing(false);
-      } catch (e) {
-        console.error('Error saving transaction to Firestore:', e);
-        setIsSyncing(false);
-      }
+    try {
+      await saveTransactionToFirestore(currentUser.uid, savedTx);
+    } catch (e) {
+      console.error('Error saving transaction to Firestore:', e);
+      showToast('Error saving to cloud database', 'info');
     }
 
     setEditingTransaction(null);
     setDefaultCategoryForModal(undefined);
   };
 
+  // Delete Transaction directly from Firebase Firestore
   const handleDeleteTransaction = async (id: string) => {
+    if (!currentUser) return;
+
     const tx = transactions.find((t) => t.id === id);
+    // Optimistic removal
     setTransactions((prev) => prev.filter((t) => t.id !== id));
     showToast(`Deleted ${tx?.title || 'transaction'}`);
 
-    if (currentUser) {
-      try {
-        setIsSyncing(true);
-        await deleteTransactionFromFirestore(currentUser.uid, id);
-        setIsSyncing(false);
-      } catch (e) {
-        console.error('Error deleting transaction in Firestore:', e);
-        setIsSyncing(false);
-      }
+    try {
+      await deleteTransactionFromFirestore(currentUser.uid, id);
+    } catch (e) {
+      console.error('Error deleting transaction in Firestore:', e);
+      showToast('Error deleting from cloud', 'info');
     }
   };
 
@@ -287,41 +214,37 @@ export default function App() {
     setIsTxModalOpen(true);
   };
 
+  // Save Budget directly to Firebase Firestore
   const handleSaveBudget = async (newConfig: BudgetConfig) => {
+    if (!currentUser) return;
+
     setBudgetConfig(newConfig);
     showToast('Monthly budget configuration saved');
 
-    if (currentUser) {
-      try {
-        setIsSyncing(true);
-        await saveBudgetConfigToFirestore(currentUser.uid, newConfig);
-        setIsSyncing(false);
-      } catch (e) {
-        console.error('Error saving budget to Firestore:', e);
-        setIsSyncing(false);
-      }
+    try {
+      await saveBudgetConfigToFirestore(currentUser.uid, newConfig);
+    } catch (e) {
+      console.error('Error saving budget to Firestore:', e);
+      showToast('Error saving budget to cloud', 'info');
     }
   };
 
+  // Clear all data directly in Firebase Firestore
   const handleResetData = async () => {
-    if (window.confirm('Are you sure you want to clear all transactions and reset data?')) {
+    if (!currentUser) return;
+
+    if (window.confirm('Are you sure you want to clear all your transactions and reset budgets in the cloud database?')) {
       setTransactions([]);
       setBudgetConfig(INITIAL_BUDGET_CONFIG);
       setCurrentMonthKey(CURRENT_YEAR_MONTH);
-      localStorage.removeItem(STORAGE_KEY_TRANSACTIONS);
-      localStorage.removeItem(STORAGE_KEY_BUDGET);
 
-      if (currentUser) {
-        try {
-          setIsSyncing(true);
-          await resetFirestoreData(currentUser.uid, [], INITIAL_BUDGET_CONFIG);
-          setIsSyncing(false);
-        } catch (e) {
-          console.error('Error resetting Firestore data:', e);
-          setIsSyncing(false);
-        }
+      try {
+        await clearAllUserDataInFirestore(currentUser.uid, INITIAL_BUDGET_CONFIG);
+        showToast('All your transactions and budgets have been cleared from the cloud', 'info');
+      } catch (e) {
+        console.error('Error clearing data in Firestore:', e);
+        showToast('Error resetting cloud records', 'info');
       }
-      showToast('All transactions and data cleared successfully', 'info');
     }
   };
 
@@ -330,12 +253,40 @@ export default function App() {
     showToast('Exported transactions to CSV file');
   };
 
-  // Jump from chart or report to Transactions tab with filter
   const handleFilterByCategory = (categoryId: string) => {
     setCategoryFilterForList(categoryId);
     setActiveTab('transactions');
   };
 
+  // 1. Initial Authentication Loading State
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center p-4">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold text-lg shadow-sm">
+            ₹
+          </div>
+          <div className="flex items-center gap-2 text-slate-700 text-xs font-semibold">
+            <Loader2 className="w-4 h-4 animate-spin text-blue-600" />
+            <span>Connecting to your personal ledger...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 2. Unauthenticated state: Render Marketing & Landing Page
+  if (!currentUser) {
+    return (
+      <MarketingPage
+        onSignInGoogle={signInWithGoogle}
+        onSignInGuest={signInGuest}
+        isAuthLoading={authLoading}
+      />
+    );
+  }
+
+  // 3. Authenticated state: Render complete Personal Finance Dashboard
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-['Plus_Jakarta_Sans'] flex flex-col antialiased selection:bg-blue-100 selection:text-blue-900">
       {/* Top Navigation & App Header */}
@@ -349,8 +300,7 @@ export default function App() {
         onExportCSV={handleExportCSV}
         onResetData={handleResetData}
         availableMonths={availableMonths}
-        isCloudSynced={!!currentUser}
-        isSyncing={isSyncing}
+        isCloudSynced={true}
       />
 
       {/* Main Container */}
@@ -378,7 +328,7 @@ export default function App() {
               onSelectCategory={handleFilterByCategory}
             />
 
-            {/* Recent Monthly Activity (Clean Mobile-Friendly Component) */}
+            {/* Recent Monthly Activity */}
             <RecentTransactions
               transactions={transactions}
               selectedMonthKey={currentMonthKey}
