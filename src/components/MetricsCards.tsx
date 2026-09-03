@@ -116,41 +116,55 @@ export const MetricsCards: React.FC<MetricsCardsProps> = ({ stats, onOpenBudgetM
               Budget Cap
             </span>
             <span className={`p-1 sm:p-2 rounded-lg shrink-0 ${
-              isOverBudget 
+              stats.overallBudget === 0
+                ? 'bg-slate-100 text-slate-500'
+                : isOverBudget 
                 ? 'bg-rose-50 text-rose-600' 
                 : isBudgetWarning 
                   ? 'bg-amber-50 text-amber-600' 
                   : 'bg-emerald-50 text-emerald-600'
             }`}>
-              {isOverBudget ? <AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
+              {stats.overallBudget === 0 ? (
+                <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
+              ) : isOverBudget ? (
+                <AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              ) : (
+                <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              )}
             </span>
           </div>
           <div className="text-lg sm:text-2xl font-extrabold text-slate-900 tracking-tight font-['Outfit'] truncate flex items-baseline justify-between gap-1">
-            <span>{formatCurrency(stats.overallBudget)}</span>
-            <span className="text-[10px] sm:text-xs font-medium text-slate-400">
-              {stats.budgetUsedPercentage.toFixed(0)}%
-            </span>
+            <span>{stats.overallBudget > 0 ? formatCurrency(stats.overallBudget) : 'Not Set'}</span>
+            {stats.overallBudget > 0 && (
+              <span className="text-[10px] sm:text-xs font-medium text-slate-400">
+                {stats.budgetUsedPercentage.toFixed(0)}%
+              </span>
+            )}
           </div>
         </div>
 
         {/* Progress bar */}
-        <div className="w-full bg-slate-100 rounded-full h-1.5 mt-2 overflow-hidden">
-          <div 
-            className={`h-full rounded-full transition-all duration-500 ${
-              isOverBudget ? 'bg-rose-500' : isBudgetWarning ? 'bg-amber-500' : 'bg-emerald-500'
-            }`}
-            style={{ width: `${Math.min(100, stats.budgetUsedPercentage)}%` }}
-          />
-        </div>
+        {stats.overallBudget > 0 && (
+          <div className="w-full bg-slate-100 rounded-full h-1.5 mt-2 overflow-hidden">
+            <div 
+              className={`h-full rounded-full transition-all duration-500 ${
+                isOverBudget ? 'bg-rose-500' : isBudgetWarning ? 'bg-amber-500' : 'bg-emerald-500'
+              }`}
+              style={{ width: `${Math.min(100, stats.budgetUsedPercentage)}%` }}
+            />
+          </div>
+        )}
 
         <div className="mt-2 flex items-center justify-between text-[10px] sm:text-xs text-slate-500 pt-1 border-t border-slate-50">
           <span className="truncate">
-            {stats.remainingBudget >= 0 
-              ? `${formatCurrency(stats.remainingBudget)} left`
-              : `${formatCurrency(Math.abs(stats.remainingBudget))} over`}
+            {stats.overallBudget > 0
+              ? (stats.remainingBudget >= 0 
+                  ? `${formatCurrency(stats.remainingBudget)} left`
+                  : `${formatCurrency(Math.abs(stats.remainingBudget))} over`)
+              : 'Tap to configure'}
           </span>
           <span className="text-blue-600 font-semibold hidden xs:inline hover:underline">
-            Adjust
+            {stats.overallBudget > 0 ? 'Adjust' : 'Set Cap'}
           </span>
         </div>
       </div>

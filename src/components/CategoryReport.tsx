@@ -213,30 +213,32 @@ export const CategoryReport: React.FC<CategoryReportProps> = ({
                   </div>
 
                   {/* Budget bar */}
-                  <div className="space-y-1 pt-1">
-                    <div className="flex items-center justify-between text-[11px] text-slate-500">
-                      <span>Budget: {formatCurrency(cat.budgetLimit)}</span>
-                      <span>
-                        {cat.budgetLimit > 0 ? (
-                          cat.remainingBudget >= 0 ? (
+                  {cat.budgetLimit > 0 ? (
+                    <div className="space-y-1 pt-1">
+                      <div className="flex items-center justify-between text-[11px] text-slate-500">
+                        <span>Budget: {formatCurrency(cat.budgetLimit)}</span>
+                        <span>
+                          {cat.remainingBudget >= 0 ? (
                             <strong className="text-slate-700 font-semibold">{formatCurrency(cat.remainingBudget)} left</strong>
                           ) : (
                             <strong className="text-rose-600 font-semibold">{formatCurrency(Math.abs(cat.remainingBudget))} over</strong>
-                          )
-                        ) : (
-                          'No cap set'
-                        )}
-                      </span>
+                          )}
+                        </span>
+                      </div>
+                      <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                        <div
+                          className={`h-full rounded-full ${
+                            isOver ? 'bg-rose-500' : isNear ? 'bg-amber-500' : 'bg-blue-600'
+                          }`}
+                          style={{ width: `${Math.min(100, cat.budgetUsedPercent)}%` }}
+                        />
+                      </div>
                     </div>
-                    <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                      <div
-                        className={`h-full rounded-full ${
-                          isOver ? 'bg-rose-500' : isNear ? 'bg-amber-500' : 'bg-blue-600'
-                        }`}
-                        style={{ width: `${Math.min(100, cat.budgetUsedPercent)}%` }}
-                      />
+                  ) : (
+                    <div className="text-[11px] text-slate-400 pt-1">
+                      No budget cap configured
                     </div>
-                  </div>
+                  )}
 
                   <div className="flex items-center justify-end pt-1">
                     <button
@@ -357,39 +359,47 @@ export const CategoryReport: React.FC<CategoryReportProps> = ({
                         </div>
                       </td>
                       <td className="py-3 px-4 text-slate-600 font-medium">
-                        {formatCurrency(cat.budgetLimit)}
+                        {cat.budgetLimit > 0 ? formatCurrency(cat.budgetLimit) : <span className="text-slate-400 font-normal">None</span>}
                       </td>
                       <td className="py-3 px-4">
-                        <div className="space-y-1">
-                          <div className="flex items-center justify-between text-[11px]">
-                            <span className={`font-bold ${isOver ? 'text-rose-600' : isNear ? 'text-amber-600' : 'text-slate-700'}`}>
-                              {cat.budgetUsedPercent.toFixed(0)}%
-                            </span>
-                            {isOver && (
-                              <span className="text-rose-600 font-bold text-[10px] bg-rose-50 px-1 py-0.5 rounded">
-                                Over
+                        {cat.budgetLimit > 0 ? (
+                          <div className="space-y-1">
+                            <div className="flex items-center justify-between text-[11px]">
+                              <span className={`font-bold ${isOver ? 'text-rose-600' : isNear ? 'text-amber-600' : 'text-slate-700'}`}>
+                                {cat.budgetUsedPercent.toFixed(0)}%
                               </span>
-                            )}
+                              {isOver && (
+                                <span className="text-rose-600 font-bold text-[10px] bg-rose-50 px-1 py-0.5 rounded">
+                                  Over
+                                </span>
+                              )}
+                            </div>
+                            <div className="w-24 bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                              <div
+                                className={`h-full rounded-full ${
+                                  isOver ? 'bg-rose-500' : isNear ? 'bg-amber-500' : 'bg-emerald-500'
+                                }`}
+                                style={{ width: `${Math.min(100, cat.budgetUsedPercent)}%` }}
+                              />
+                            </div>
                           </div>
-                          <div className="w-24 bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                            <div
-                              className={`h-full rounded-full ${
-                                isOver ? 'bg-rose-500' : isNear ? 'bg-amber-500' : 'bg-emerald-500'
-                              }`}
-                              style={{ width: `${Math.min(100, cat.budgetUsedPercent)}%` }}
-                            />
-                          </div>
-                        </div>
+                        ) : (
+                          <span className="text-slate-400 text-[11px]">Uncapped</span>
+                        )}
                       </td>
                       <td className="py-3 px-4">
-                        <span
-                          className={`font-semibold ${
-                            cat.remainingBudget < 0 ? 'text-rose-600' : 'text-slate-700'
-                          }`}
-                        >
-                          {cat.remainingBudget < 0 ? '-' : ''}
-                          {formatCurrency(Math.abs(cat.remainingBudget))}
-                        </span>
+                        {cat.budgetLimit > 0 ? (
+                          <span
+                            className={`font-semibold ${
+                              cat.remainingBudget < 0 ? 'text-rose-600' : 'text-slate-700'
+                            }`}
+                          >
+                            {cat.remainingBudget < 0 ? '-' : ''}
+                            {formatCurrency(Math.abs(cat.remainingBudget))}
+                          </span>
+                        ) : (
+                          <span className="text-slate-400">—</span>
+                        )}
                       </td>
                       <td className="py-3 px-4 text-slate-600">
                         <span className="font-semibold text-slate-900">{cat.transactionCount}</span>

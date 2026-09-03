@@ -9,7 +9,6 @@ export const EXPENSE_CATEGORIES: Category[] = [
     bgColor: 'bg-blue-50',
     textColor: 'text-blue-700',
     icon: 'Home',
-    defaultMonthlyBudget: 25000,
   },
   {
     id: 'groceries',
@@ -19,7 +18,6 @@ export const EXPENSE_CATEGORIES: Category[] = [
     bgColor: 'bg-emerald-50',
     textColor: 'text-emerald-700',
     icon: 'ShoppingCart',
-    defaultMonthlyBudget: 12000,
   },
   {
     id: 'dining',
@@ -29,7 +27,6 @@ export const EXPENSE_CATEGORIES: Category[] = [
     bgColor: 'bg-amber-50',
     textColor: 'text-amber-700',
     icon: 'Utensils',
-    defaultMonthlyBudget: 6000,
   },
   {
     id: 'utilities',
@@ -39,7 +36,6 @@ export const EXPENSE_CATEGORIES: Category[] = [
     bgColor: 'bg-cyan-50',
     textColor: 'text-cyan-700',
     icon: 'Zap',
-    defaultMonthlyBudget: 4500,
   },
   {
     id: 'transport',
@@ -49,7 +45,6 @@ export const EXPENSE_CATEGORIES: Category[] = [
     bgColor: 'bg-purple-50',
     textColor: 'text-purple-700',
     icon: 'Car',
-    defaultMonthlyBudget: 5000,
   },
   {
     id: 'healthcare',
@@ -59,7 +54,6 @@ export const EXPENSE_CATEGORIES: Category[] = [
     bgColor: 'bg-pink-50',
     textColor: 'text-pink-700',
     icon: 'HeartPulse',
-    defaultMonthlyBudget: 3500,
   },
   {
     id: 'entertainment',
@@ -69,7 +63,6 @@ export const EXPENSE_CATEGORIES: Category[] = [
     bgColor: 'bg-indigo-50',
     textColor: 'text-indigo-700',
     icon: 'Film',
-    defaultMonthlyBudget: 2500,
   },
   {
     id: 'shopping',
@@ -79,7 +72,6 @@ export const EXPENSE_CATEGORIES: Category[] = [
     bgColor: 'bg-orange-50',
     textColor: 'text-orange-700',
     icon: 'ShoppingBag',
-    defaultMonthlyBudget: 5000,
   },
   {
     id: 'education',
@@ -89,7 +81,6 @@ export const EXPENSE_CATEGORIES: Category[] = [
     bgColor: 'bg-teal-50',
     textColor: 'text-teal-700',
     icon: 'BookOpen',
-    defaultMonthlyBudget: 2500,
   },
   {
     id: 'other_expense',
@@ -99,7 +90,6 @@ export const EXPENSE_CATEGORIES: Category[] = [
     bgColor: 'bg-slate-50',
     textColor: 'text-slate-700',
     icon: 'Tag',
-    defaultMonthlyBudget: 3000,
   },
 ];
 

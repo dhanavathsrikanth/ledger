@@ -100,13 +100,14 @@ export async function saveBudgetConfigToFirestore(userId: string, config: Budget
 }
 
 /**
- * Seed initial sample/demo transactions and budget into Firestore if user's account is empty
+ * Seed initial transactions and budget into Firestore if user's account is empty
  */
 export async function seedInitialFirestoreData(
   userId: string, 
   initialTransactions: Transaction[],
   initialBudget: BudgetConfig
 ): Promise<void> {
+  if (initialTransactions.length === 0) return;
   const txCollectionRef = collection(db, 'users', userId, 'transactions');
   const existingDocs = await getDocs(txCollectionRef);
   
@@ -125,6 +126,37 @@ export async function seedInitialFirestoreData(
       updatedAt: new Date().toISOString()
     });
     await batch.commit();
+  }
+}
+
+/**
+ * Automatically clean legacy dummy transactions from Firestore
+ */
+export async function cleanLegacyDummyData(userId: string): Promise<void> {
+  try {
+    const txCollectionRef = collection(db, 'users', userId, 'transactions');
+    const existingDocs = await getDocs(txCollectionRef);
+    const batch = writeBatch(db);
+    let count = 0;
+    existingDocs.forEach((docSnap) => {
+      const id = docSnap.id;
+      if (
+        id.startsWith('tx-202604-') ||
+        id.startsWith('tx-202605-') ||
+        id.startsWith('tx-202606-') ||
+        id.startsWith('tx-202607-') ||
+        id.startsWith('tx-202608-') ||
+        id.startsWith('tx-202609-')
+      ) {
+        batch.delete(docSnap.ref);
+        count++;
+      }
+    });
+    if (count > 0) {
+      await batch.commit();
+    }
+  } catch (e) {
+    console.error('Error cleaning legacy dummy data in Firestore:', e);
   }
 }
 

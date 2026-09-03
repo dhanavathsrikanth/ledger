@@ -221,15 +221,15 @@ export const Header: React.FC<HeaderProps> = ({
                 <span className="hidden xs:inline">CSV</span>
               </button>
 
-              {/* Reset to Demo */}
+              {/* Clear Data */}
               <button
                 onClick={onResetData}
                 id="header-reset-btn"
-                className="inline-flex items-center gap-1 px-2 sm:px-2.5 py-1.5 sm:py-2 text-xs font-medium text-slate-500 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-slate-700 transition"
-                title="Reset to default demo data"
+                className="inline-flex items-center gap-1 px-2 sm:px-2.5 py-1.5 sm:py-2 text-xs font-medium text-slate-500 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-rose-600 transition"
+                title="Clear all transactions and reset data"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
-                <span className="hidden md:inline">Reset</span>
+                <span className="hidden md:inline">Clear Data</span>
               </button>
 
               {/* Primary Action: Add Transaction */}

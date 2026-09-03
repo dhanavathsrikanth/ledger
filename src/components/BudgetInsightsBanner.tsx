@@ -36,13 +36,17 @@ export const BudgetInsightsBanner: React.FC<BudgetInsightsBannerProps> = ({
             Financial Health &amp; Insights
           </h3>
           <span className={`inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full ${
-            stats.budgetUsedPercentage > 100
+            stats.overallBudget === 0
+              ? 'bg-slate-100 text-slate-600 border border-slate-200'
+              : stats.budgetUsedPercentage > 100
               ? 'bg-rose-50 text-rose-700 border border-rose-200'
               : stats.budgetUsedPercentage >= 80
               ? 'bg-amber-50 text-amber-700 border border-amber-200'
               : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
           }`}>
-            {stats.budgetUsedPercentage > 100 ? (
+            {stats.overallBudget === 0 ? (
+              <><CheckCircle2 className="w-3 h-3 text-slate-400" /> Ready</>
+            ) : stats.budgetUsedPercentage > 100 ? (
               <><AlertTriangle className="w-3 h-3" /> Over Budget</>
             ) : stats.budgetUsedPercentage >= 80 ? (
               <><AlertTriangle className="w-3 h-3" /> Caution Pace</>
@@ -52,7 +56,7 @@ export const BudgetInsightsBanner: React.FC<BudgetInsightsBannerProps> = ({
           </span>
         </div>
 
-        {stats.daysRemaining > 0 && stats.remainingBudget > 0 && (
+        {stats.overallBudget > 0 && stats.daysRemaining > 0 && stats.remainingBudget > 0 && (
           <div className="self-start sm:self-auto text-[11px] font-semibold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg flex items-center gap-1">
             <span className="text-slate-500">Safe Daily Burn:</span>
             <span className="text-slate-900 font-bold">{formatCurrency(stats.safeDailySpend, true)}/day</span>
@@ -68,11 +72,15 @@ export const BudgetInsightsBanner: React.FC<BudgetInsightsBannerProps> = ({
             <div className="flex items-center justify-between font-bold text-slate-800 mb-1.5">
               <span>Budget Pace</span>
               <span className="text-[11px] font-semibold text-slate-500">
-                {stats.budgetUsedPercentage.toFixed(0)}% consumed
+                {stats.overallBudget > 0 ? `${stats.budgetUsedPercentage.toFixed(0)}% consumed` : 'No budget set'}
               </span>
             </div>
             <p className="text-slate-600 leading-relaxed text-[11px] sm:text-xs">
-              {stats.budgetUsedPercentage > 100 ? (
+              {stats.overallBudget === 0 ? (
+                <>
+                  No monthly spending cap defined yet. Tap <strong className="text-blue-600">Budgets</strong> above to configure your target spending limits.
+                </>
+              ) : stats.budgetUsedPercentage > 100 ? (
                 <>
                   Surpassed monthly ceiling by{' '}
                   <strong className="text-rose-600">
@@ -143,6 +151,10 @@ export const BudgetInsightsBanner: React.FC<BudgetInsightsBannerProps> = ({
                   {nearBudgetCategories.map((c) => c.categoryName).join(', ')}
                 </strong>{' '}
                 at {nearBudgetCategories[0].budgetUsedPercent.toFixed(0)}% of limit. Monitor closely.
+              </p>
+            ) : stats.totalExpense === 0 ? (
+              <p className="text-slate-500 leading-relaxed text-[11px] sm:text-xs">
+                No expense activity recorded yet for this month.
               </p>
             ) : (
               <p className="text-slate-600 leading-relaxed text-[11px] sm:text-xs">

@@ -79,10 +79,10 @@ export function calculateMonthlyStats(
   const categorySpendings: CategorySpending[] = EXPENSE_CATEGORIES.map((cat) => {
     const catData = categoryTotals[cat.id] || { total: 0, count: 0 };
     const spent = catData.total;
-    const limit = budgetConfig.categoryLimits[cat.id] ?? (cat.defaultMonthlyBudget || 0);
+    const limit = budgetConfig.categoryLimits[cat.id] ?? 0;
     const percentOfTotal = totalExpense > 0 ? (spent / totalExpense) * 100 : 0;
     const budgetUsedPercent = limit > 0 ? (spent / limit) * 100 : 0;
-    const remaining = limit - spent;
+    const remaining = limit > 0 ? limit - spent : 0;
     const avg = catData.count > 0 ? spent / catData.count : 0;
 
     return {

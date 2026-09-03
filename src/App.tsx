@@ -40,12 +40,26 @@ import {
   deleteTransactionFromFirestore, 
   saveBudgetConfigToFirestore,
   seedInitialFirestoreData,
+  cleanLegacyDummyData,
   resetFirestoreData
 } from './services/firestoreService';
 
-const STORAGE_KEY_TRANSACTIONS = 'expense_tracker_txs_inr_v2';
-const STORAGE_KEY_BUDGET = 'expense_tracker_budget_inr_v2';
-const DEFAULT_MONTH = '2026-09';
+const now = new Date();
+const CURRENT_YEAR_MONTH = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+const STORAGE_KEY_TRANSACTIONS = 'expense_tracker_txs_clean_v1';
+const STORAGE_KEY_BUDGET = 'expense_tracker_budget_clean_v1';
+
+const isLegacyDummyTx = (t: Transaction): boolean => {
+  if (!t || typeof t.id !== 'string') return false;
+  return (
+    t.id.startsWith('tx-202604-') ||
+    t.id.startsWith('tx-202605-') ||
+    t.id.startsWith('tx-202606-') ||
+    t.id.startsWith('tx-202607-') ||
+    t.id.startsWith('tx-202608-') ||
+    t.id.startsWith('tx-202609-')
+  );
+};
 
 export default function App() {
   const { currentUser, loading: authLoading } = useAuth();
@@ -53,10 +67,18 @@ export default function App() {
   // Local state initialized from localStorage
   const [transactions, setTransactions] = useState<Transaction[]>(() => {
     try {
+      // Clear legacy storage keys if present
+      localStorage.removeItem('expense_tracker_txs_inr_v1');
+      localStorage.removeItem('expense_tracker_txs_inr_v2');
+      localStorage.removeItem('expense_tracker_budget_inr_v1');
+      localStorage.removeItem('expense_tracker_budget_inr_v2');
+
       const saved = localStorage.getItem(STORAGE_KEY_TRANSACTIONS);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed)) {
+          return parsed.filter((t) => !isLegacyDummyTx(t));
+        }
       }
     } catch (e) {
       console.error('Error reading saved transactions', e);
@@ -69,7 +91,12 @@ export default function App() {
       const saved = localStorage.getItem(STORAGE_KEY_BUDGET);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed && typeof parsed.overallBudget === 'number') return parsed;
+        if (parsed && typeof parsed.overallBudget === 'number') {
+          if (parsed.overallBudget === 75000 && parsed.categoryLimits?.housing === 25000) {
+            return INITIAL_BUDGET_CONFIG;
+          }
+          return parsed;
+        }
       }
     } catch (e) {
       console.error('Error reading saved budget config', e);
@@ -78,7 +105,7 @@ export default function App() {
   });
 
   const [isSyncing, setIsSyncing] = useState(false);
-  const [currentMonthKey, setCurrentMonthKey] = useState<string>(DEFAULT_MONTH);
+  const [currentMonthKey, setCurrentMonthKey] = useState<string>(CURRENT_YEAR_MONTH);
   const [activeTab, setActiveTab] = useState<ActiveTab>('dashboard');
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
@@ -86,8 +113,6 @@ export default function App() {
   const [categoryFilterForList, setCategoryFilterForList] = useState<string>('all');
   const [defaultCategoryForModal, setDefaultCategoryForModal] = useState<string | undefined>(undefined);
   const [toastMessage, setToastMessage] = useState<{ text: string; type: 'success' | 'info' } | null>(null);
-
-  const hasSeededRef = useRef<string | null>(null);
 
   const showToast = (text: string, type: 'success' | 'info' = 'success') => {
     setToastMessage({ text, type });
@@ -106,19 +131,15 @@ export default function App() {
     const setupFirestoreSync = async () => {
       setIsSyncing(true);
       try {
-        // First seed if this is the user's first time logging into this account
-        if (hasSeededRef.current !== currentUser.uid) {
-          hasSeededRef.current = currentUser.uid;
-          await seedInitialFirestoreData(currentUser.uid, INITIAL_TRANSACTIONS, INITIAL_BUDGET_CONFIG);
-        }
+        // Automatically purge any dummy legacy transactions from user's Firestore
+        await cleanLegacyDummyData(currentUser.uid);
 
         // Subscribe to real-time transactions
         unsubTxs = subscribeToTransactions(
           currentUser.uid,
           (cloudTxs) => {
-            if (cloudTxs.length > 0) {
-              setTransactions(cloudTxs);
-            }
+            const cleanTxs = cloudTxs.filter((t) => !isLegacyDummyTx(t));
+            setTransactions(cleanTxs);
             setIsSyncing(false);
           },
           (err) => {
@@ -132,7 +153,11 @@ export default function App() {
           currentUser.uid,
           (cloudBudget) => {
             if (cloudBudget) {
-              setBudgetConfig(cloudBudget);
+              if (cloudBudget.overallBudget === 75000 && cloudBudget.categoryLimits?.housing === 25000) {
+                setBudgetConfig(INITIAL_BUDGET_CONFIG);
+              } else {
+                setBudgetConfig(cloudBudget);
+              }
             }
           },
           (err) => {
@@ -188,9 +213,11 @@ export default function App() {
   // Available unique months
   const availableMonths = useMemo(() => {
     const set = new Set<string>();
-    set.add(DEFAULT_MONTH);
+    set.add(CURRENT_YEAR_MONTH);
     for (const t of transactions) {
-      set.add(t.date.slice(0, 7));
+      if (t.date) {
+        set.add(t.date.slice(0, 7));
+      }
     }
     return Array.from(set).sort().reverse();
   }, [transactions]);
@@ -277,22 +304,24 @@ export default function App() {
   };
 
   const handleResetData = async () => {
-    if (window.confirm('Reset transactions and budgets to default demo dataset?')) {
-      setTransactions(INITIAL_TRANSACTIONS);
+    if (window.confirm('Are you sure you want to clear all transactions and reset data?')) {
+      setTransactions([]);
       setBudgetConfig(INITIAL_BUDGET_CONFIG);
-      setCurrentMonthKey(DEFAULT_MONTH);
+      setCurrentMonthKey(CURRENT_YEAR_MONTH);
+      localStorage.removeItem(STORAGE_KEY_TRANSACTIONS);
+      localStorage.removeItem(STORAGE_KEY_BUDGET);
 
       if (currentUser) {
         try {
           setIsSyncing(true);
-          await resetFirestoreData(currentUser.uid, INITIAL_TRANSACTIONS, INITIAL_BUDGET_CONFIG);
+          await resetFirestoreData(currentUser.uid, [], INITIAL_BUDGET_CONFIG);
           setIsSyncing(false);
         } catch (e) {
           console.error('Error resetting Firestore data:', e);
           setIsSyncing(false);
         }
       }
-      showToast('Reset to demo dataset in Firebase successfully', 'info');
+      showToast('All transactions and data cleared successfully', 'info');
     }
   };
 
@@ -473,8 +502,8 @@ export default function App() {
         onSave={handleSaveTransaction}
         editingTransaction={editingTransaction}
         defaultDate={
-          currentMonthKey === DEFAULT_MONTH
-            ? '2026-09-03'
+          currentMonthKey === CURRENT_YEAR_MONTH
+            ? new Date().toISOString().slice(0, 10)
             : `${currentMonthKey}-01`
         }
         defaultCategory={defaultCategoryForModal}

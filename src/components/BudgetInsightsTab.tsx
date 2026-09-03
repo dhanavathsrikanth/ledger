@@ -71,10 +71,14 @@ export const BudgetInsightsTab: React.FC<BudgetInsightsTabProps> = ({
               Total Budget Limit
             </span>
             <div className="text-2xl font-extrabold text-slate-900 mt-1 font-['Outfit']">
-              {formatCurrency(stats.overallBudget)}
+              {stats.overallBudget > 0 ? formatCurrency(stats.overallBudget) : 'Not Set'}
             </div>
             <div className="text-xs text-slate-500 mt-2">
-              Utilized: <strong className="text-slate-800">{stats.budgetUsedPercentage.toFixed(1)}%</strong>
+              {stats.overallBudget > 0 ? (
+                <>Utilized: <strong className="text-slate-800">{stats.budgetUsedPercentage.toFixed(1)}%</strong></>
+              ) : (
+                'No monthly limit defined'
+              )}
             </div>
           </div>
 
@@ -82,11 +86,15 @@ export const BudgetInsightsTab: React.FC<BudgetInsightsTabProps> = ({
             <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               Remaining Budget
             </span>
-            <div className={`text-2xl font-extrabold mt-1 font-['Outfit'] ${stats.remainingBudget >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
-              {stats.remainingBudget >= 0 ? '' : '-'}{formatCurrency(Math.abs(stats.remainingBudget))}
+            <div className={`text-2xl font-extrabold mt-1 font-['Outfit'] ${stats.overallBudget === 0 ? 'text-slate-700' : stats.remainingBudget >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+              {stats.overallBudget > 0
+                ? `${stats.remainingBudget >= 0 ? '' : '-'}${formatCurrency(Math.abs(stats.remainingBudget))}`
+                : 'No Cap'}
             </div>
             <div className="text-xs text-slate-500 mt-2">
-              {stats.remainingBudget >= 0 ? 'Surplus buffer remaining' : 'Deficit overspend'}
+              {stats.overallBudget > 0
+                ? (stats.remainingBudget >= 0 ? 'Surplus buffer remaining' : 'Deficit overspend')
+                : 'Spending is uncapped'}
             </div>
           </div>
 
@@ -95,12 +103,14 @@ export const BudgetInsightsTab: React.FC<BudgetInsightsTabProps> = ({
               Safe Daily Spend
             </span>
             <div className="text-2xl font-extrabold text-indigo-600 mt-1 font-['Outfit']">
-              {stats.daysRemaining > 0 && stats.remainingBudget > 0
+              {stats.overallBudget > 0 && stats.daysRemaining > 0 && stats.remainingBudget > 0
                 ? formatCurrency(stats.safeDailySpend)
-                : '$0.00'}
+                : '—'}
             </div>
             <div className="text-xs text-slate-500 mt-2">
-              For {stats.daysRemaining} days remaining in month
+              {stats.overallBudget > 0 
+                ? `For ${stats.daysRemaining} days remaining in month` 
+                : 'Configure budget to compute'}
             </div>
           </div>
 
@@ -108,38 +118,56 @@ export const BudgetInsightsTab: React.FC<BudgetInsightsTabProps> = ({
             <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               Projected End-of-Month
             </span>
-            <div className={`text-2xl font-extrabold mt-1 font-['Outfit'] ${projectedVariance >= 0 ? 'text-slate-900' : 'text-amber-600'}`}>
+            <div className={`text-2xl font-extrabold mt-1 font-['Outfit'] ${stats.overallBudget > 0 && projectedVariance < 0 ? 'text-amber-600' : 'text-slate-900'}`}>
               {formatCurrency(projectedSpend)}
             </div>
             <div className="text-xs text-slate-500 mt-2">
-              {projectedVariance >= 0 ? (
-                <span className="text-emerald-700 font-medium">On track for {formatCurrency(projectedVariance)} buffer</span>
+              {stats.overallBudget > 0 ? (
+                projectedVariance >= 0 ? (
+                  <span className="text-emerald-700 font-medium">On track for {formatCurrency(projectedVariance)} buffer</span>
+                ) : (
+                  <span className="text-amber-700 font-medium">Trending {formatCurrency(Math.abs(projectedVariance))} over</span>
+                )
               ) : (
-                <span className="text-amber-700 font-medium">Trending {formatCurrency(Math.abs(projectedVariance))} over</span>
+                <span className="text-slate-500">Estimated based on daily pace</span>
               )}
             </div>
           </div>
         </div>
 
         {/* Big Overall Progress Bar */}
-        <div className="mt-6 space-y-2">
-          <div className="flex items-center justify-between text-xs">
-            <span className="font-semibold text-slate-700">
-              Total Budget Utilization: {stats.budgetUsedPercentage.toFixed(1)}%
-            </span>
-            <span className="text-slate-500">
-              {formatCurrency(stats.totalExpense)} spent / {formatCurrency(stats.overallBudget)} cap
-            </span>
+        {stats.overallBudget > 0 ? (
+          <div className="mt-6 space-y-2">
+            <div className="flex items-center justify-between text-xs">
+              <span className="font-semibold text-slate-700">
+                Total Budget Utilization: {stats.budgetUsedPercentage.toFixed(1)}%
+              </span>
+              <span className="text-slate-500">
+                {formatCurrency(stats.totalExpense)} spent / {formatCurrency(stats.overallBudget)} cap
+              </span>
+            </div>
+            <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all duration-500 ${
+                  isOverBudget ? 'bg-rose-500' : isBudgetWarning ? 'bg-amber-500' : 'bg-emerald-500'
+                }`}
+                style={{ width: `${Math.min(100, stats.budgetUsedPercentage)}%` }}
+              />
+            </div>
           </div>
-          <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
-            <div
-              className={`h-full rounded-full transition-all duration-500 ${
-                isOverBudget ? 'bg-rose-500' : isBudgetWarning ? 'bg-amber-500' : 'bg-emerald-500'
-              }`}
-              style={{ width: `${Math.min(100, stats.budgetUsedPercentage)}%` }}
-            />
+        ) : (
+          <div className="mt-6 p-3.5 bg-slate-50 border border-slate-200/70 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+            <span className="text-slate-600">
+              No total spending target configured for {stats.monthName}.
+            </span>
+            <button
+              onClick={onOpenBudgetModal}
+              className="text-blue-600 hover:text-blue-800 font-bold self-start sm:self-auto"
+            >
+              Set Monthly Spending Cap &rarr;
+            </button>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Category Budget Detail Cards */}

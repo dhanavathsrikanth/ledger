@@ -45,14 +45,9 @@ export const BudgetModal: React.FC<BudgetModalProps> = ({
     onClose();
   };
 
-  const handleApplyRecommended = () => {
-    const recommended: Record<string, number> = {};
-    for (const cat of EXPENSE_CATEGORIES) {
-      recommended[cat.id] = cat.defaultMonthlyBudget || 200;
-    }
-    const sum = (Object.values(recommended) as number[]).reduce((a: number, b: number) => a + b, 0);
-    setOverallBudget(sum);
-    setCategoryLimits(recommended);
+  const handleClearAllLimits = () => {
+    setOverallBudget(0);
+    setCategoryLimits({});
   };
 
   return (
@@ -126,16 +121,16 @@ export const BudgetModal: React.FC<BudgetModalProps> = ({
               </label>
               <button
                 type="button"
-                onClick={handleApplyRecommended}
-                className="text-xs text-blue-600 hover:text-blue-800 font-semibold"
+                onClick={handleClearAllLimits}
+                className="text-xs text-rose-600 hover:text-rose-800 font-semibold"
               >
-                Reset to Standard Targets
+                Clear All Limits
               </button>
             </div>
 
             <div className="space-y-2.5 max-h-60 overflow-y-auto pr-1">
               {EXPENSE_CATEGORIES.map((cat) => {
-                const limit = categoryLimits[cat.id] ?? (cat.defaultMonthlyBudget || 0);
+                const limit = categoryLimits[cat.id] ?? 0;
                 return (
                   <div
                     key={cat.id}
