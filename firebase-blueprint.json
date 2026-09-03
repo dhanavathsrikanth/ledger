@@ -1,0 +1,36 @@
+{
+  "entities": {
+    "User": {
+      "path": "users/{userId}",
+      "fields": {
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "createdAt": { "type": "string" }
+      }
+    },
+    "Transaction": {
+      "path": "users/{userId}/transactions/{transactionId}",
+      "fields": {
+        "id": { "type": "string" },
+        "date": { "type": "string" },
+        "title": { "type": "string" },
+        "amount": { "type": "number" },
+        "type": { "type": "string" },
+        "categoryId": { "type": "string" },
+        "paymentMethod": { "type": "string" },
+        "note": { "type": "string" },
+        "isRecurring": { "type": "boolean" },
+        "updatedAt": { "type": "string" }
+      }
+    },
+    "BudgetConfig": {
+      "path": "users/{userId}/budget/current",
+      "fields": {
+        "overallBudget": { "type": "number" },
+        "categoryLimits": { "type": "object" },
+        "updatedAt": { "type": "string" }
+      }
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Monthly Expense & Income Tracker",
+  "description": "An intuitive monthly income and expenditure tracker featuring interactive visual charts, budget insights, and category-based spending reports.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
