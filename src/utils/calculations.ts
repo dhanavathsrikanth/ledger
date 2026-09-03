@@ -30,6 +30,8 @@ export function getMonthName(monthKey: string): string {
   return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 }
 
+export const formatMonthYear = getMonthName;
+
 export function getShortMonth(monthKey: string): string {
   const [yearStr, monthStr] = monthKey.split('-');
   const year = parseInt(yearStr, 10);

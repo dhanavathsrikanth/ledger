@@ -57,8 +57,8 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({
   return (
     <div className="space-y-4 sm:space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
-        {/* Left Column: Category Spending Visualizer (Donut & Breakdown) */}
-        <div className="lg:col-span-6 bg-white rounded-xl border border-slate-200/80 p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+        {/* Left Column: Category Spending Distribution */}
+        <div className="lg:col-span-6 bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col justify-between">
           <div className="flex items-center justify-between mb-3 sm:mb-4">
             <div>
               <h3 className="text-sm sm:text-base font-bold text-slate-900 font-['Outfit']">
@@ -69,10 +69,10 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({
               </p>
             </div>
             {/* View toggle */}
-            <div className="flex items-center bg-slate-100 p-1 rounded-lg text-xs font-semibold">
+            <div className="flex items-center bg-slate-100/90 p-1 rounded-xl text-xs font-semibold border border-slate-200/60">
               <button
                 onClick={() => setChartView('donut')}
-                className={`px-2 py-1 sm:px-2.5 rounded-md transition ${
+                className={`px-2.5 py-1 rounded-lg transition ${
                   chartView === 'donut' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-900'
                 }`}
               >
@@ -80,19 +80,19 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({
               </button>
               <button
                 onClick={() => setChartView('budget_bars')}
-                className={`px-2 py-1 sm:px-2.5 rounded-md transition ${
+                className={`px-2.5 py-1 rounded-lg transition ${
                   chartView === 'budget_bars' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-900'
                 }`}
               >
-                Utilization
+                Limits
               </button>
             </div>
           </div>
 
           {activeSpendCategories.length === 0 ? (
             <div className="h-56 sm:h-64 flex flex-col items-center justify-center text-slate-400 text-xs">
-              <p>No expenditure recorded for this month.</p>
-              <p className="text-slate-500 mt-1">Add expenses to see category breakdown.</p>
+              <p className="font-semibold text-slate-600">No expenses recorded for this month.</p>
+              <p className="text-slate-400 mt-1">Add transactions to visualize your category breakdown.</p>
             </div>
           ) : chartView === 'donut' ? (
             <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
@@ -118,11 +118,11 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({
                         return [formatCurrency(num), 'Spent'];
                       }}
                       contentStyle={{
-                        borderRadius: '8px',
+                        borderRadius: '12px',
                         border: '1px solid #e2e8f0',
                         fontSize: '12px',
-                        fontWeight: '500',
-                        boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+                        fontWeight: '600',
+                        boxShadow: '0 8px 16px -4px rgb(0 0 0 / 0.1)',
                       }}
                     />
                   </PieChart>
@@ -135,29 +135,29 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({
                   <div
                     key={cat.categoryId}
                     onClick={() => onSelectCategory && onSelectCategory(cat.categoryId)}
-                    className="flex items-center justify-between text-xs p-1.5 rounded-lg hover:bg-slate-50 transition cursor-pointer"
+                    className="flex items-center justify-between text-xs p-2 rounded-xl hover:bg-slate-50 transition cursor-pointer border border-transparent hover:border-slate-200/60"
                   >
                     <div className="flex items-center gap-2 truncate">
                       <span
                         className="w-2.5 h-2.5 rounded-full shrink-0"
                         style={{ backgroundColor: cat.color }}
                       />
-                      <span className="font-medium text-slate-700 truncate">
+                      <span className="font-semibold text-slate-700 truncate">
                         {cat.categoryName}
                       </span>
                     </div>
                     <div className="text-right shrink-0">
-                      <span className="font-semibold text-slate-900">
+                      <span className="font-bold text-slate-900 font-['Outfit']">
                         {formatCurrency(cat.totalSpent)}
                       </span>
-                      <span className="text-[11px] text-slate-400 ml-1.5">
+                      <span className="text-[11px] text-slate-400 ml-1 font-medium">
                         ({cat.percentageOfTotal.toFixed(0)}%)
                       </span>
                     </div>
                   </div>
                 ))}
                 {activeSpendCategories.length > 6 && (
-                  <p className="text-[11px] text-slate-400 text-center pt-1">
+                  <p className="text-[11px] text-slate-400 text-center pt-1 font-medium">
                     + {activeSpendCategories.length - 6} more in reports
                   </p>
                 )}
@@ -170,17 +170,17 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({
                 const isOver = cat.budgetLimit > 0 && cat.totalSpent > cat.budgetLimit;
                 const isWarn = cat.budgetLimit > 0 && !isOver && cat.budgetUsedPercent >= 80;
                 return (
-                  <div key={cat.categoryId} className="space-y-1">
+                  <div key={cat.categoryId} className="space-y-1.5">
                     <div className="flex items-center justify-between text-xs">
                       <div className="flex items-center gap-1.5 truncate pr-2">
                         <CategoryIcon name={cat.icon} className="w-3.5 h-3.5 text-slate-600 shrink-0" />
                         <span className="font-semibold text-slate-800 truncate">{cat.categoryName}</span>
                       </div>
-                      <div className="space-x-1 shrink-0">
+                      <div className="space-x-1 shrink-0 font-medium">
                         <span className="font-bold text-slate-900">{formatCurrency(cat.totalSpent)}</span>
                         <span className="text-slate-400 hidden xs:inline">/ {formatCurrency(cat.budgetLimit)}</span>
                         <span
-                          className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                          className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
                             isOver
                               ? 'bg-rose-100 text-rose-700'
                               : isWarn
@@ -206,24 +206,24 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({
             </div>
           )}
 
-          <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] sm:text-xs text-slate-500">
-            <span>Total Month Spending: <strong className="text-slate-800">{formatCurrency(stats.totalExpense)}</strong></span>
+          <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] sm:text-xs text-slate-500">
+            <span>Total Outflows: <strong className="text-slate-800">{formatCurrency(stats.totalExpense)}</strong></span>
             <span>Active Categories: <strong className="text-slate-800">{activeSpendCategories.length}</strong></span>
           </div>
         </div>
 
         {/* Right Column: 6-Month Income vs Expenditure Trend */}
-        <div className="lg:col-span-6 bg-white rounded-xl border border-slate-200/80 p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+        <div className="lg:col-span-6 bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col justify-between">
           <div className="flex items-center justify-between mb-3 sm:mb-4">
             <div>
               <h3 className="text-sm sm:text-base font-bold text-slate-900 font-['Outfit']">
-                Income vs. Expenditure Trend
+                Income vs. Outflow Trend
               </h3>
               <p className="text-xs text-slate-500">
-                Historical monthly comparison (last 6 months)
+                Monthly historical progression (last 6 months)
               </p>
             </div>
-            <span className="text-[10px] sm:text-xs font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-700">
+            <span className="text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200/60">
               6-Month
             </span>
           </div>
@@ -232,7 +232,7 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={trends}
-                margin={{ top: 10, right: 10, left: -22, bottom: 0 }}
+                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
               >
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                 <XAxis dataKey="label" stroke="#64748b" fontSize={11} tickLine={false} />
@@ -240,7 +240,7 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({
                   stroke="#64748b"
                   fontSize={10}
                   tickLine={false}
-                  width={38}
+                  width={42}
                   tickFormatter={(val) => `₹${val >= 1000 ? `${(val / 1000).toFixed(0)}k` : val}`}
                 />
                 <Tooltip
@@ -249,32 +249,33 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({
                     return [formatCurrency(num)];
                   }}
                   contentStyle={{
-                    borderRadius: '8px',
+                    borderRadius: '12px',
                     border: '1px solid #e2e8f0',
                     fontSize: '12px',
-                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+                    fontWeight: '600',
+                    boxShadow: '0 8px 16px -4px rgb(0 0 0 / 0.1)',
                   }}
                 />
                 <Legend
                   wrapperStyle={{ fontSize: '11px', paddingTop: '8px' }}
                   iconType="circle"
                 />
-                <Bar dataKey="income" name="Income" fill="#10B981" radius={[4, 4, 0, 0]} maxBarSize={24} />
-                <Bar dataKey="expense" name="Expenditure" fill="#F43F5E" radius={[4, 4, 0, 0]} maxBarSize={24} />
+                <Bar dataKey="income" name="Inflow" fill="#10B981" radius={[4, 4, 0, 0]} maxBarSize={22} />
+                <Bar dataKey="expense" name="Outflow" fill="#F43F5E" radius={[4, 4, 0, 0]} maxBarSize={22} />
               </BarChart>
             </ResponsiveContainer>
           </div>
 
-          <div className="mt-3 pt-2.5 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[11px] sm:text-xs text-slate-500">
+          <div className="mt-3 pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[11px] sm:text-xs text-slate-500">
             <span>
               6-Month Net Balance:{' '}
-              <strong className="text-indigo-600 font-semibold">
+              <strong className="text-indigo-600 font-extrabold">
                 {formatCurrency(trends.reduce((acc, t) => acc + t.net, 0))}
               </strong>
             </span>
             <span>
               Avg Monthly Spend:{' '}
-              <strong className="text-slate-800">
+              <strong className="text-slate-800 font-bold">
                 {formatCurrency(
                   trends.reduce((acc, t) => acc + t.expense, 0) / Math.max(1, trends.length)
                 )}
@@ -284,25 +285,25 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({
         </div>
       </div>
 
-      {/* Full Width: Daily Spending Pace Area Chart */}
-      <div className="bg-white rounded-xl border border-slate-200/80 p-4 sm:p-5 shadow-xs">
+      {/* Full Width: Daily Cumulative Spending vs Budget Benchmark */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 sm:mb-4 gap-2">
           <div>
             <h3 className="text-sm sm:text-base font-bold text-slate-900 font-['Outfit']">
-              Daily Cumulative Spend vs. Budget Benchmark
+              Daily Cumulative Outflow vs. Budget Benchmark
             </h3>
             <p className="text-xs text-slate-500">
-              Tracking spending progression against the ideal linear budget threshold
+              Tracking spending progression against ideal linear pace throughout {stats.monthName}
             </p>
           </div>
           <div className="flex items-center gap-3 sm:gap-4 text-[11px] sm:text-xs flex-wrap">
             <div className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded bg-blue-500" />
-              <span className="text-slate-600 font-medium">Actual Spent</span>
+              <span className="text-slate-600 font-semibold">Actual Spent</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="w-2.5 h-0.5 bg-slate-400 border-b border-dashed border-slate-400" />
-              <span className="text-slate-600 font-medium">Benchmark Pace</span>
+              <span className="text-slate-600 font-semibold">Target Linear Pace</span>
             </div>
           </div>
         </div>
@@ -311,7 +312,7 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
               data={dailyChartData}
-              margin={{ top: 10, right: 10, left: -22, bottom: 0 }}
+              margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
             >
               <defs>
                 <linearGradient id="spendGradient" x1="0" y1="0" x2="0" y2="1">
@@ -332,7 +333,7 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({
                 stroke="#64748b"
                 fontSize={10}
                 tickLine={false}
-                width={38}
+                width={42}
                 tickFormatter={(val) => `₹${val >= 1000 ? `${(val / 1000).toFixed(0)}k` : val}`}
               />
               <Tooltip
@@ -342,10 +343,11 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({
                   return [formatCurrency(num), label];
                 }}
                 contentStyle={{
-                  borderRadius: '8px',
+                  borderRadius: '12px',
                   border: '1px solid #e2e8f0',
                   fontSize: '12px',
-                  boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+                  fontWeight: '600',
+                  boxShadow: '0 8px 16px -4px rgb(0 0 0 / 0.1)',
                 }}
               />
               <Area

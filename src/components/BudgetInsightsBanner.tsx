@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertTriangle, CheckCircle2, TrendingUp, Sparkles, Flame, DollarSign } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, TrendingUp, Sparkles, Flame, ShieldAlert, ArrowRight } from 'lucide-react';
 import { MonthlyStats } from '../types';
 import { formatCurrency } from '../utils/calculations';
 
@@ -26,23 +26,25 @@ export const BudgetInsightsBanner: React.FC<BudgetInsightsBannerProps> = ({
   );
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200/80 p-4 sm:p-5 shadow-xs">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-3.5 pb-2.5 border-b border-slate-100">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
-            <Sparkles className="w-3.5 h-3.5" />
+    <div className="bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-100">
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <div className="w-7 h-7 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 border border-indigo-100">
+            <Sparkles className="w-4 h-4" />
           </div>
-          <h3 className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wider font-['Outfit']">
-            Financial Health &amp; Insights
-          </h3>
-          <span className={`inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full ${
+          <div>
+            <h3 className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wider font-['Outfit']">
+              Budget Intelligence &amp; Velocity
+            </h3>
+          </div>
+          <span className={`inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${
             stats.overallBudget === 0
-              ? 'bg-slate-100 text-slate-600 border border-slate-200'
+              ? 'bg-slate-100 text-slate-600 border-slate-200'
               : stats.budgetUsedPercentage > 100
-              ? 'bg-rose-50 text-rose-700 border border-rose-200'
+              ? 'bg-rose-50 text-rose-700 border-rose-200'
               : stats.budgetUsedPercentage >= 80
-              ? 'bg-amber-50 text-amber-700 border border-amber-200'
-              : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+              ? 'bg-amber-50 text-amber-700 border-amber-200'
+              : 'bg-emerald-50 text-emerald-700 border-emerald-200'
           }`}>
             {stats.overallBudget === 0 ? (
               <><CheckCircle2 className="w-3 h-3 text-slate-400" /> Ready</>
@@ -51,28 +53,29 @@ export const BudgetInsightsBanner: React.FC<BudgetInsightsBannerProps> = ({
             ) : stats.budgetUsedPercentage >= 80 ? (
               <><AlertTriangle className="w-3 h-3" /> Caution Pace</>
             ) : (
-              <><CheckCircle2 className="w-3 h-3" /> Healthy</>
+              <><CheckCircle2 className="w-3 h-3" /> Healthy Pace</>
             )}
           </span>
         </div>
 
         {stats.overallBudget > 0 && stats.daysRemaining > 0 && stats.remainingBudget > 0 && (
-          <div className="self-start sm:self-auto text-[11px] font-semibold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg flex items-center gap-1">
-            <span className="text-slate-500">Safe Daily Burn:</span>
-            <span className="text-slate-900 font-bold">{formatCurrency(stats.safeDailySpend, true)}/day</span>
-            <span className="text-slate-400">({stats.daysRemaining}d left)</span>
+          <div className="self-start sm:self-auto text-[11px] font-bold text-slate-800 bg-slate-100/90 px-3 py-1 rounded-xl flex items-center gap-1.5 border border-slate-200/60">
+            <Flame className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+            <span className="text-slate-500 font-medium">Safe Burn:</span>
+            <span className="text-slate-900 font-extrabold">{formatCurrency(stats.safeDailySpend, true)}/day</span>
+            <span className="text-slate-400 font-normal">({stats.daysRemaining}d left)</span>
           </div>
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 sm:gap-3 text-xs">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
         {/* Insight 1: Overall Pace */}
-        <div className="p-3 sm:p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/60 flex flex-col justify-between">
+        <div className="p-3.5 rounded-xl bg-slate-50/70 border border-slate-200/60 flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between font-bold text-slate-800 mb-1.5">
-              <span>Budget Pace</span>
+            <div className="flex items-center justify-between font-bold text-slate-800 mb-1.5 font-['Outfit']">
+              <span>Budget Trajectory</span>
               <span className="text-[11px] font-semibold text-slate-500">
-                {stats.overallBudget > 0 ? `${stats.budgetUsedPercentage.toFixed(0)}% consumed` : 'No budget set'}
+                {stats.overallBudget > 0 ? `${stats.budgetUsedPercentage.toFixed(0)}% consumed` : 'Uncapped'}
               </span>
             </div>
             <p className="text-slate-600 leading-relaxed text-[11px] sm:text-xs">
@@ -82,15 +85,15 @@ export const BudgetInsightsBanner: React.FC<BudgetInsightsBannerProps> = ({
                 </>
               ) : stats.budgetUsedPercentage > 100 ? (
                 <>
-                  Surpassed monthly ceiling by{' '}
-                  <strong className="text-rose-600">
+                  Exceeded monthly target by{' '}
+                  <strong className="text-rose-600 font-bold">
                     {formatCurrency(Math.abs(stats.remainingBudget))}
                   </strong>
-                  . Rebalance non-essential expenses.
+                  . Minimize non-essential expenditures for the rest of this month.
                 </>
               ) : (
                 <>
-                  <strong className="text-slate-900">
+                  <strong className="text-slate-900 font-bold">
                     {formatCurrency(stats.remainingBudget)}
                   </strong>{' '}
                   available cushion out of {formatCurrency(stats.overallBudget)} total allocation.
@@ -98,13 +101,27 @@ export const BudgetInsightsBanner: React.FC<BudgetInsightsBannerProps> = ({
               )}
             </p>
           </div>
+          {stats.overallBudget > 0 && (
+            <div className="mt-2.5 w-full bg-slate-200/70 rounded-full h-1.5 overflow-hidden">
+              <div 
+                className={`h-full rounded-full ${
+                  stats.budgetUsedPercentage > 100 
+                    ? 'bg-rose-500' 
+                    : stats.budgetUsedPercentage >= 80 
+                    ? 'bg-amber-500' 
+                    : 'bg-emerald-500'
+                }`} 
+                style={{ width: `${Math.min(100, stats.budgetUsedPercentage)}%` }} 
+              />
+            </div>
+          )}
         </div>
 
         {/* Insight 2: Category Spotlight */}
-        <div className="p-3 sm:p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/60 flex flex-col justify-between">
+        <div className="p-3.5 rounded-xl bg-slate-50/70 border border-slate-200/60 flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between font-bold text-slate-800 mb-1.5">
-              <span>Top Expenditure</span>
+            <div className="flex items-center justify-between font-bold text-slate-800 mb-1.5 font-['Outfit']">
+              <span>Top Outflow Category</span>
               <Flame className="w-3.5 h-3.5 text-orange-500" />
             </div>
             {topCategory ? (
@@ -123,21 +140,22 @@ export const BudgetInsightsBanner: React.FC<BudgetInsightsBannerProps> = ({
               onClick={() => onSelectCategory(topCategory.categoryId)}
               className="mt-2 text-left font-bold text-blue-600 hover:text-blue-800 text-[11px] transition inline-flex items-center gap-1"
             >
-              <span>Filter {topCategory.categoryName}</span> &rarr;
+              <span>Filter {topCategory.categoryName} items</span>
+              <ArrowRight className="w-3 h-3" />
             </button>
           )}
         </div>
 
         {/* Insight 3: Category Limit Alerts */}
-        <div className="p-3 sm:p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/60 flex flex-col justify-between">
+        <div className="p-3.5 rounded-xl bg-slate-50/70 border border-slate-200/60 flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between font-bold text-slate-800 mb-1.5">
-              <span>Category Status</span>
+            <div className="flex items-center justify-between font-bold text-slate-800 mb-1.5 font-['Outfit']">
+              <span>Category Limits Compliance</span>
               <TrendingUp className="w-3.5 h-3.5 text-indigo-500" />
             </div>
             {overBudgetCategories.length > 0 ? (
               <p className="text-slate-600 leading-relaxed text-[11px] sm:text-xs">
-                <strong className="text-rose-600">
+                <strong className="text-rose-600 font-bold">
                   {overBudgetCategories.map((c) => c.categoryName).join(', ')}
                 </strong>{' '}
                 exceeded by{' '}
@@ -147,7 +165,7 @@ export const BudgetInsightsBanner: React.FC<BudgetInsightsBannerProps> = ({
               </p>
             ) : nearBudgetCategories.length > 0 ? (
               <p className="text-slate-600 leading-relaxed text-[11px] sm:text-xs">
-                <strong className="text-amber-600">
+                <strong className="text-amber-600 font-bold">
                   {nearBudgetCategories.map((c) => c.categoryName).join(', ')}
                 </strong>{' '}
                 at {nearBudgetCategories[0].budgetUsedPercent.toFixed(0)}% of limit. Monitor closely.
@@ -158,8 +176,8 @@ export const BudgetInsightsBanner: React.FC<BudgetInsightsBannerProps> = ({
               </p>
             ) : (
               <p className="text-slate-600 leading-relaxed text-[11px] sm:text-xs">
-                All categories are within budgeted ceilings. Savings rate is at{' '}
-                <strong className="text-emerald-600">
+                All categories are within budgeted limits. Monthly savings rate is at{' '}
+                <strong className="text-emerald-600 font-bold">
                   {stats.savingsRate.toFixed(1)}%
                 </strong>
                 .
@@ -168,8 +186,8 @@ export const BudgetInsightsBanner: React.FC<BudgetInsightsBannerProps> = ({
           </div>
           <div className="mt-2 text-slate-400 text-[10px] sm:text-[11px]">
             {overBudgetCategories.length > 0
-              ? 'Trim discretionary transactions or bump category limit'
-              : 'Target: Maintain savings rate above 20%'}
+              ? 'Trim discretionary transactions or adjust limits'
+              : 'Target: Keep savings rate above 20%'}
           </div>
         </div>
       </div>
