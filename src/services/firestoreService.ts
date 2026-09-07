@@ -115,10 +115,13 @@ export async function saveTransactionToFirestore(userId: string, transaction: Tr
   const path = `users/${userId}/transactions/${transaction.id}`;
   try {
     const txDocRef = doc(db, 'users', userId, 'transactions', transaction.id);
-    await setDoc(txDocRef, {
-      ...transaction,
-      updatedAt: new Date().toISOString()
-    });
+    // Firestore rejects `undefined` values — strip them before writing.
+    const cleanData = Object.fromEntries(
+      Object.entries({ ...transaction, updatedAt: new Date().toISOString() }).filter(
+        ([, v]) => v !== undefined
+      )
+    );
+    await setDoc(txDocRef, cleanData);
   } catch (err) {
     handleFirestoreError(err, OperationType.WRITE, path);
   }

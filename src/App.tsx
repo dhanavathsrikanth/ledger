@@ -150,56 +150,51 @@ export default function App() {
     return Array.from(set).sort().reverse();
   }, [transactions]);
 
-  // Save Transaction directly to Firebase Firestore
+  // Save Transaction directly to Firebase Firestore.
+  // Firestore (via onSnapshot above) is the single source of truth —
+  // no optimistic local writes, UI updates only when the server confirms.
   const handleSaveTransaction = async (
     txData: Omit<Transaction, 'id'>,
     existingId?: string
   ) => {
     if (!currentUser) return;
 
-    let savedTx: Transaction;
-    if (existingId) {
-      savedTx = { ...txData, id: existingId };
-      // Optimistic update
-      setTransactions((prev) =>
-        prev.map((t) => (t.id === existingId ? savedTx : t))
-      );
-      showToast('Transaction updated');
-    } else {
-      savedTx = {
-        ...txData,
-        id: `tx-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-      };
-      // Optimistic update
-      setTransactions((prev) => [savedTx, ...prev]);
-      showToast(`Recorded ${txData.type === 'income' ? 'income' : 'expense'}: ${txData.title}`);
-    }
+    const savedTx: Transaction = existingId
+      ? { ...txData, id: existingId }
+      : {
+          ...txData,
+          id: `tx-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        };
 
     try {
       await saveTransactionToFirestore(currentUser.uid, savedTx);
+      showToast(
+        existingId
+          ? 'Transaction updated'
+          : `Recorded ${txData.type === 'income' ? 'income' : 'expense'}: ${txData.title}`
+      );
     } catch (e) {
       console.error('Error saving transaction to Firestore:', e);
-      showToast('Error saving to cloud database', 'info');
+      showToast('Not saved — check connection / Firestore rules', 'info');
     }
 
     setEditingTransaction(null);
     setDefaultCategoryForModal(undefined);
   };
 
-  // Delete Transaction directly from Firebase Firestore
+  // Delete Transaction directly from Firebase Firestore.
+  // UI updates via subscription only after the server confirms.
   const handleDeleteTransaction = async (id: string) => {
     if (!currentUser) return;
 
     const tx = transactions.find((t) => t.id === id);
-    // Optimistic removal
-    setTransactions((prev) => prev.filter((t) => t.id !== id));
-    showToast(`Deleted ${tx?.title || 'transaction'}`);
 
     try {
       await deleteTransactionFromFirestore(currentUser.uid, id);
+      showToast(`Deleted ${tx?.title || 'transaction'}`);
     } catch (e) {
       console.error('Error deleting transaction in Firestore:', e);
-      showToast('Error deleting from cloud', 'info');
+      showToast('Not deleted — check connection / Firestore rules', 'info');
     }
   };
 
@@ -214,32 +209,29 @@ export default function App() {
     setIsTxModalOpen(true);
   };
 
-  // Save Budget directly to Firebase Firestore
+  // Save Budget directly to Firebase Firestore.
+  // Subscription updates local state only after the server confirms.
   const handleSaveBudget = async (newConfig: BudgetConfig) => {
     if (!currentUser) return;
 
-    setBudgetConfig(newConfig);
-    showToast('Monthly budget configuration saved');
-
     try {
       await saveBudgetConfigToFirestore(currentUser.uid, newConfig);
+      showToast('Monthly budget configuration saved');
     } catch (e) {
       console.error('Error saving budget to Firestore:', e);
-      showToast('Error saving budget to cloud', 'info');
+      showToast('Not saved — check connection / Firestore rules', 'info');
     }
   };
 
-  // Clear all data directly in Firebase Firestore
+  // Clear all data directly in Firebase Firestore.
+  // Local state clears via subscriptions only after the server confirms.
   const handleResetData = async () => {
     if (!currentUser) return;
 
     if (window.confirm('Are you sure you want to clear all your transactions and reset budgets in the cloud database?')) {
-      setTransactions([]);
-      setBudgetConfig(INITIAL_BUDGET_CONFIG);
-      setCurrentMonthKey(CURRENT_YEAR_MONTH);
-
       try {
         await clearAllUserDataInFirestore(currentUser.uid, INITIAL_BUDGET_CONFIG);
+        setCurrentMonthKey(CURRENT_YEAR_MONTH);
         showToast('All your transactions and budgets have been cleared from the cloud', 'info');
       } catch (e) {
         console.error('Error clearing data in Firestore:', e);

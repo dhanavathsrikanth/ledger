@@ -1,6 +1,7 @@
 export type TransactionType = 'expense' | 'income';
 
 export type PaymentMethod = 
+  | 'upi'
   | 'credit_card'
   | 'debit_card'
   | 'bank_transfer'

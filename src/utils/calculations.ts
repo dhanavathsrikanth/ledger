@@ -237,6 +237,7 @@ export function getPaymentMethodBreakdown(
   );
 
   const labels: Record<PaymentMethod, string> = {
+    upi: 'UPI',
     credit_card: 'Credit Card',
     debit_card: 'Debit Card',
     bank_transfer: 'Bank Transfer',
@@ -245,6 +246,7 @@ export function getPaymentMethodBreakdown(
   };
 
   const totals: Record<PaymentMethod, { total: number; count: number }> = {
+    upi: { total: 0, count: 0 },
     credit_card: { total: 0, count: 0 },
     debit_card: { total: 0, count: 0 },
     bank_transfer: { total: 0, count: 0 },

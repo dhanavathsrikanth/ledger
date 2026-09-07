@@ -26,7 +26,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
   const [amount, setAmount] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [date, setDate] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('credit_card');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('upi');
   const [note, setNote] = useState('');
   const [isRecurring, setIsRecurring] = useState(false);
   const [error, setError] = useState('');
@@ -50,7 +50,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
       const defaultCat = defaultCategory || EXPENSE_CATEGORIES[0].id;
       setCategoryId(defaultCat);
       setDate(defaultDate || new Date().toISOString().slice(0, 10));
-      setPaymentMethod('credit_card');
+      setPaymentMethod('upi');
       setNote('');
       setIsRecurring(false);
       setError('');
@@ -91,7 +91,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
         categoryId,
         date,
         paymentMethod,
-        note: note.trim() || undefined,
+        ...(note.trim() ? { note: note.trim() } : {}),
         isRecurring,
       },
       editingTransaction ? editingTransaction.id : undefined
@@ -245,6 +245,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
                 onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
                 className="w-full px-3 py-2 text-xs text-slate-800 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 capitalize"
               >
+                <option value="upi">UPI</option>
                 <option value="credit_card">Credit Card</option>
                 <option value="debit_card">Debit Card</option>
                 <option value="bank_transfer">Bank Transfer</option>
