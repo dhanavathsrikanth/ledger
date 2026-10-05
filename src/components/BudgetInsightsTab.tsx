@@ -138,7 +138,7 @@ export const BudgetInsightsTab: React.FC<BudgetInsightsTabProps> = ({
         {/* Big Overall Progress Bar */}
         {stats.overallBudget > 0 ? (
           <div className="mt-6 space-y-2">
-            <div className="flex items-center justify-between text-xs">
+            <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 text-xs">
               <span className="font-semibold text-slate-700">
                 Total Budget Utilization: {stats.budgetUsedPercentage.toFixed(1)}%
               </span>
@@ -172,7 +172,7 @@ export const BudgetInsightsTab: React.FC<BudgetInsightsTabProps> = ({
 
       {/* Category Budget Detail Cards */}
       <div>
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
           <h4 className="text-base font-semibold text-slate-900">
             Category Budget Breakdown &amp; Warnings
           </h4>
@@ -242,7 +242,7 @@ export const BudgetInsightsTab: React.FC<BudgetInsightsTabProps> = ({
                   </div>
                 </div>
 
-                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs mt-2">
+                <div className="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-x-2 gap-y-1 text-xs mt-2">
                   <span className="text-slate-500">
                     {cat.remainingBudget >= 0
                       ? `${formatCurrency(cat.remainingBudget)} left`

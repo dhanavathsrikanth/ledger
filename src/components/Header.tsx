@@ -6,24 +6,17 @@ import {
   SlidersHorizontal, 
   Download, 
   RotateCcw,
-  LayoutDashboard,
-  ReceiptText,
-  PieChart as PieChartIcon,
-  Target,
   Cloud,
   LogOut,
   Calendar,
   Sparkles,
   Loader2
 } from 'lucide-react';
-import { ActiveTab } from '../types';
 import { useAuth } from '../context/AuthContext';
 
 interface HeaderProps {
   currentMonthKey: string;
   onMonthChange: (monthKey: string) => void;
-  activeTab: ActiveTab;
-  onTabChange: (tab: ActiveTab) => void;
   onOpenAddModal: () => void;
   onOpenBudgetModal: () => void;
   onExportCSV: () => void;
@@ -36,8 +29,6 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({
   currentMonthKey,
   onMonthChange,
-  activeTab,
-  onTabChange,
   onOpenAddModal,
   onOpenBudgetModal,
   onExportCSV,
@@ -117,7 +108,7 @@ export const Header: React.FC<HeaderProps> = ({
                 </span>
                 <div 
                   title="Directly connected to Firebase Firestore Cloud Vault"
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide border shrink-0 bg-emerald-50 text-emerald-700 border-emerald-200"
+                  className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide border shrink-0 bg-emerald-50 text-emerald-700 border-emerald-200"
                 >
                   <Cloud className="w-2.5 h-2.5 text-emerald-600" />
                   <span className="hidden xs:inline">Cloud Active</span>
@@ -193,7 +184,7 @@ export const Header: React.FC<HeaderProps> = ({
               className="inline-flex items-center gap-1.5 h-9 px-3 sm:px-4 text-[13px] font-medium text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-lg transition shadow-xs hover:shadow-sm"
             >
               <Plus className="w-4 h-4 stroke-[2.5]" />
-              <span>Add</span>
+              <span className="hidden xs:inline">Add</span>
               <span className="hidden sm:inline">Transaction</span>
             </button>
 
@@ -293,56 +284,6 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Desktop Tab Navigation Bar */}
-        <div className="hidden sm:flex items-center gap-1 pt-2 pb-2.5 border-t border-slate-100 overflow-x-auto">
-          <button
-            onClick={() => onTabChange('dashboard')}
-            className={`flex items-center gap-2 px-3 py-1.5 text-[13px] font-medium rounded-lg transition whitespace-nowrap ${
-              activeTab === 'dashboard'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-            }`}
-          >
-            <LayoutDashboard className="w-4 h-4" />
-            <span>Dashboard Overview</span>
-          </button>
-
-          <button
-            onClick={() => onTabChange('transactions')}
-            className={`flex items-center gap-2 px-3 py-1.5 text-[13px] font-medium rounded-lg transition whitespace-nowrap ${
-              activeTab === 'transactions'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-            }`}
-          >
-            <ReceiptText className="w-4 h-4" />
-            <span>Transactions Ledger</span>
-          </button>
-
-          <button
-            onClick={() => onTabChange('reports')}
-            className={`flex items-center gap-2 px-3 py-1.5 text-[13px] font-medium rounded-lg transition whitespace-nowrap ${
-              activeTab === 'reports'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-            }`}
-          >
-            <PieChartIcon className="w-4 h-4" />
-            <span>Category Spending Reports</span>
-          </button>
-
-          <button
-            onClick={() => onTabChange('budgets')}
-            className={`flex items-center gap-2 px-3 py-1.5 text-[13px] font-medium rounded-lg transition whitespace-nowrap ${
-              activeTab === 'budgets'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-            }`}
-          >
-            <Target className="w-4 h-4" />
-            <span>Budget Insights &amp; Health</span>
-          </button>
-        </div>
       </div>
     </header>
   );

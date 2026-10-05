@@ -19,6 +19,8 @@
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
   }
 
   h1,
@@ -35,6 +37,17 @@
   textarea,
   button {
     font-family: inherit;
+    touch-action: manipulation;
+  }
+
+  /* Mobile: keep form fields >=16px so iOS Safari doesn't auto-zoom on focus
+     (overrides the 13px design size only on small screens) */
+  @media (max-width: 640px) {
+    input,
+    select,
+    textarea {
+      font-size: 16px !important;
+    }
   }
 }
 

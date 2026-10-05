@@ -286,8 +286,6 @@ export default function App() {
       <Header
         currentMonthKey={currentMonthKey}
         onMonthChange={setCurrentMonthKey}
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
         onOpenAddModal={() => handleOpenAddModal()}
         onOpenBudgetModal={() => setIsBudgetModalOpen(true)}
         onExportCSV={handleExportCSV}
@@ -297,7 +295,7 @@ export default function App() {
       />
 
       {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 space-y-5 sm:space-y-6 pb-24 sm:pb-12">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 space-y-5 pb-[calc(7rem+env(safe-area-inset-bottom))]">
         {/* Core Monthly KPIs */}
         <MetricsCards
           stats={monthlyStats}
@@ -373,65 +371,70 @@ export default function App() {
         )}
       </main>
 
-      {/* Mobile Bottom Navigation Bar */}
-      <nav aria-label="Mobile Navigation" className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] sm:hidden px-3 py-1.5 flex items-center justify-around">
-        <button
-          onClick={() => setActiveTab('dashboard')}
-          className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-lg transition ${
-            activeTab === 'dashboard'
-              ? 'text-blue-600 font-semibold'
-              : 'text-slate-500 hover:text-slate-900 font-medium'
-          }`}
-        >
-          <LayoutDashboard className="w-5 h-5" />
-          <span className="text-[11px] font-medium">Overview</span>
-        </button>
+      {/* Persistent Bottom Navigation Bar (constant across all viewport sizes) */}
+      <nav
+        aria-label="Primary Navigation"
+        className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] pb-[env(safe-area-inset-bottom)]"
+      >
+        <div className="max-w-7xl mx-auto w-full flex items-center justify-around px-3 py-1.5">
+          <button
+            onClick={() => setActiveTab('dashboard')}
+            className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-lg transition ${
+              activeTab === 'dashboard'
+                ? 'text-blue-600 font-semibold'
+                : 'text-slate-500 hover:text-slate-900 font-medium'
+            }`}
+          >
+            <LayoutDashboard className="w-5 h-5" />
+            <span className="text-[11px] font-medium">Overview</span>
+          </button>
 
-        <button
-          onClick={() => setActiveTab('transactions')}
-          className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-lg transition ${
-            activeTab === 'transactions'
-              ? 'text-blue-600 font-semibold'
-              : 'text-slate-500 hover:text-slate-900 font-medium'
-          }`}
-        >
-          <ReceiptText className="w-5 h-5" />
-          <span className="text-[11px] font-medium">Ledger</span>
-        </button>
+          <button
+            onClick={() => setActiveTab('transactions')}
+            className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-lg transition ${
+              activeTab === 'transactions'
+                ? 'text-blue-600 font-semibold'
+                : 'text-slate-500 hover:text-slate-900 font-medium'
+            }`}
+          >
+            <ReceiptText className="w-5 h-5" />
+            <span className="text-[11px] font-medium">Ledger</span>
+          </button>
 
-        {/* Elevated Quick-Add Action Button */}
-        <button
-          onClick={() => handleOpenAddModal()}
-          className="w-12 h-12 -mt-5 rounded-full bg-blue-600 hover:bg-blue-700 active:scale-95 text-white shadow-lg flex items-center justify-center transition border-4 border-slate-50"
-          title="Add Transaction"
-          aria-label="Add Transaction"
-        >
-          <Plus className="w-6 h-6 stroke-[2.5]" />
-        </button>
+          {/* Elevated Quick-Add Action Button */}
+          <button
+            onClick={() => handleOpenAddModal()}
+            className="w-12 h-12 -mt-5 rounded-full bg-blue-600 hover:bg-blue-700 active:scale-95 text-white shadow-lg flex items-center justify-center transition border-4 border-slate-50"
+            title="Add Transaction"
+            aria-label="Add Transaction"
+          >
+            <Plus className="w-6 h-6 stroke-[2.5]" />
+          </button>
 
-        <button
-          onClick={() => setActiveTab('reports')}
-          className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-lg transition ${
-            activeTab === 'reports'
-              ? 'text-blue-600 font-semibold'
-              : 'text-slate-500 hover:text-slate-900 font-medium'
-          }`}
-        >
-          <PieChart className="w-5 h-5" />
-          <span className="text-[11px] font-medium">Reports</span>
-        </button>
+          <button
+            onClick={() => setActiveTab('reports')}
+            className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-lg transition ${
+              activeTab === 'reports'
+                ? 'text-blue-600 font-semibold'
+                : 'text-slate-500 hover:text-slate-900 font-medium'
+            }`}
+          >
+            <PieChart className="w-5 h-5" />
+            <span className="text-[11px] font-medium">Reports</span>
+          </button>
 
-        <button
-          onClick={() => setActiveTab('budgets')}
-          className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-lg transition ${
-            activeTab === 'budgets'
-              ? 'text-blue-600 font-semibold'
-              : 'text-slate-500 hover:text-slate-900 font-medium'
-          }`}
-        >
-          <Target className="w-5 h-5" />
-          <span className="text-[11px] font-medium">Budgets</span>
-        </button>
+          <button
+            onClick={() => setActiveTab('budgets')}
+            className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-lg transition ${
+              activeTab === 'budgets'
+                ? 'text-blue-600 font-semibold'
+                : 'text-slate-500 hover:text-slate-900 font-medium'
+            }`}
+          >
+            <Target className="w-5 h-5" />
+            <span className="text-[11px] font-medium">Budgets</span>
+          </button>
+        </div>
       </nav>
 
       {/* Add / Edit Transaction Modal */}
@@ -462,7 +465,7 @@ export default function App() {
 
       {/* Toast Feedback */}
       {toastMessage && (
-        <div className="fixed bottom-20 sm:bottom-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white px-4 py-2.5 rounded-lg shadow-xl flex items-center gap-2.5 text-[13px] font-medium border border-slate-800 transition transform animate-slideUp">
+        <div className="fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white px-4 py-2.5 rounded-lg shadow-xl flex items-center gap-2.5 text-[13px] font-medium border border-slate-800 transition transform animate-slideUp">
           {toastMessage.type === 'success' ? (
             <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
           ) : (

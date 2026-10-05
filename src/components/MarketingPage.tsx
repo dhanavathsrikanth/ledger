@@ -87,7 +87,7 @@ export const MarketingPage: React.FC<MarketingPageProps> = ({
             <button
               onClick={handleGuestClick}
               disabled={loadingType !== null || isAuthLoading}
-              className="text-[13px] font-medium text-slate-600 hover:text-slate-900 h-9 px-3.5 rounded-lg hover:bg-slate-100 transition inline-flex items-center gap-1.5"
+              className="text-[13px] font-medium text-slate-600 hover:text-slate-900 h-9 px-3 rounded-lg hover:bg-slate-100 transition inline-flex items-center gap-1.5"
             >
               {loadingType === 'guest' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
               <span>Explore Demo</span>
@@ -95,7 +95,7 @@ export const MarketingPage: React.FC<MarketingPageProps> = ({
             <button
               onClick={handleGoogleClick}
               disabled={loadingType !== null || isAuthLoading}
-              className="inline-flex items-center gap-2 h-9 px-4 text-[13px] font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition shadow-xs"
+              className="inline-flex items-center gap-1.5 h-9 px-3 text-[13px] font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition shadow-xs"
             >
               {loadingType === 'google' ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -136,7 +136,7 @@ export const MarketingPage: React.FC<MarketingPageProps> = ({
         {/* Hero Section */}
         <section className="pt-12 pb-14 sm:pt-16 sm:pb-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
           <div className="text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 mb-6 shadow-2xs">
+            <div className="inline-flex max-w-full text-center items-center justify-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 mb-6 shadow-2xs">
               <Lock className="w-3.5 h-3.5 text-emerald-600" />
               <span>Direct Cloud Database &bull; Strictly Private to Your Account</span>
             </div>
@@ -210,7 +210,7 @@ export const MarketingPage: React.FC<MarketingPageProps> = ({
               </div>
 
               {/* Preview Mode Switcher */}
-              <div className="flex items-center bg-slate-100/90 p-1 rounded-lg text-[13px] font-medium border border-slate-200/60 self-start sm:self-auto">
+              <div className="flex flex-wrap items-center gap-y-1 bg-slate-100/90 p-1 rounded-lg text-[13px] font-medium border border-slate-200/60 self-start sm:self-auto">
                 <button
                   onClick={() => setPreviewTab('overview')}
                   className={`px-3 py-1 rounded-lg transition ${
@@ -266,7 +266,7 @@ export const MarketingPage: React.FC<MarketingPageProps> = ({
 
                 {/* Mini chart visual bar */}
                 <div className="p-4 bg-slate-50/70 rounded-xl border border-slate-200/60">
-                  <div className="flex items-center justify-between text-xs mb-2">
+                  <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 text-xs mb-2">
                     <span className="font-semibold text-slate-800">Monthly Spending Ceiling Utilization</span>
                     <span className="font-semibold font-mono tabular-nums text-slate-700">₹42,500 / ₹60,000 (71%)</span>
                   </div>

@@ -59,7 +59,7 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
         {/* Left Column: Category Spending Distribution */}
         <div className="lg:col-span-6 bg-white rounded-xl border border-slate-200/80 p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col justify-between">
-          <div className="flex items-center justify-between mb-3 sm:mb-4">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-3 sm:mb-4">
             <div>
               <h3 className="text-sm sm:text-base font-semibold text-slate-900">
                 Category Spending Distribution
@@ -214,7 +214,7 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({
 
         {/* Right Column: 6-Month Income vs Expenditure Trend */}
         <div className="lg:col-span-6 bg-white rounded-xl border border-slate-200/80 p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col justify-between">
-          <div className="flex items-center justify-between mb-3 sm:mb-4">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-3 sm:mb-4">
             <div>
               <h3 className="text-sm sm:text-base font-semibold text-slate-900">
                 Income vs. Outflow Trend

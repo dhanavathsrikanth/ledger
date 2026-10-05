@@ -33,7 +33,7 @@ export const MetricsCards: React.FC<MetricsCardsProps> = ({ stats, onOpenBudgetM
             {formatCurrency(stats.totalIncome)}
           </div>
         </div>
-        <div className="mt-4 flex items-center justify-between text-[11px] pt-2.5 border-t border-slate-100 gap-2">
+        <div className="mt-4 flex flex-wrap items-center justify-between text-[11px] pt-2.5 border-t border-slate-100 gap-x-2 gap-y-1">
           <span className="text-slate-400 font-medium hidden xs:inline">Monthly Inflow</span>
           <span className="font-medium text-emerald-700 bg-emerald-50/80 px-2 py-0.5 rounded-full border border-emerald-100/80">
             Recorded Inflow
@@ -59,7 +59,7 @@ export const MetricsCards: React.FC<MetricsCardsProps> = ({ stats, onOpenBudgetM
             {formatCurrency(stats.totalExpense)}
           </div>
         </div>
-        <div className="mt-4 flex items-center justify-between text-[11px] pt-2.5 border-t border-slate-100 gap-2">
+        <div className="mt-4 flex flex-wrap items-center justify-between text-[11px] pt-2.5 border-t border-slate-100 gap-x-2 gap-y-1">
           <span className="text-slate-400 font-medium hidden xs:inline">
             {stats.totalIncome > 0
               ? `${((stats.totalExpense / stats.totalIncome) * 100).toFixed(0)}% of income`
@@ -95,7 +95,7 @@ export const MetricsCards: React.FC<MetricsCardsProps> = ({ stats, onOpenBudgetM
             {isSurplus ? '+' : ''}{formatCurrency(stats.netSavings)}
           </div>
         </div>
-        <div className="mt-4 flex items-center justify-between text-[11px] pt-2.5 border-t border-slate-100 gap-2">
+        <div className="mt-4 flex flex-wrap items-center justify-between text-[11px] pt-2.5 border-t border-slate-100 gap-x-2 gap-y-1">
           <span className="text-slate-400 font-medium hidden xs:inline">Savings Rate</span>
           <span className={`font-medium px-2 py-0.5 rounded-full border ${
             stats.savingsRate >= 20
@@ -161,7 +161,7 @@ export const MetricsCards: React.FC<MetricsCardsProps> = ({ stats, onOpenBudgetM
           </div>
         )}
 
-        <div className="mt-4 flex items-center justify-between text-[11px] text-slate-500 pt-2.5 border-t border-slate-100 gap-2">
+        <div className="mt-4 flex flex-wrap items-center justify-between text-[11px] text-slate-500 pt-2.5 border-t border-slate-100 gap-x-2 gap-y-1">
           <span className="truncate font-medium">
             {stats.overallBudget > 0
               ? (stats.remainingBudget >= 0

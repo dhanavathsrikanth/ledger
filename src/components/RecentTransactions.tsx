@@ -59,7 +59,7 @@ export const RecentTransactions: React.FC<RecentTransactionsProps> = ({
         </div>
 
         {/* Filter Pills & View All */}
-        <div className="flex items-center justify-between sm:justify-end gap-2">
+        <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2">
           <div className="flex items-center bg-slate-100/90 p-1 rounded-lg text-[13px] font-medium border border-slate-200/60">
             <button
               onClick={() => setFilterType('all')}
@@ -165,7 +165,7 @@ export const RecentTransactions: React.FC<RecentTransactionsProps> = ({
                       )}
                     </div>
 
-                    <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-0.5 truncate">
+                    <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500 mt-0.5">
                       <span className="font-medium text-slate-600 truncate">{category.name}</span>
                       <span>•</span>
                       <span className="shrink-0">{formattedDate}</span>

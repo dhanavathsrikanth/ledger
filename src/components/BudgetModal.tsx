@@ -95,7 +95,7 @@ export const BudgetModal: React.FC<BudgetModalProps> = ({
               />
             </div>
 
-            <div className="mt-2.5 flex items-center justify-between text-xs">
+            <div className="mt-2.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-xs">
               <span className="text-slate-600">
                 Sum of category limits: <strong className="font-semibold font-mono tabular-nums">{formatCurrency(totalCategoryBudgets)}</strong>
               </span>

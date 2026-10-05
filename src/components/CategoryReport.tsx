@@ -138,7 +138,7 @@ export const CategoryReport: React.FC<CategoryReportProps> = ({
           </div>
 
           {/* Filter Pills */}
-          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg text-xs font-semibold">
+          <div className="flex flex-wrap items-center gap-1 bg-slate-100 p-1 rounded-lg text-xs font-semibold">
             <button
               onClick={() => setFilterType('all')}
               className={`px-2.5 py-1 rounded-md transition ${
