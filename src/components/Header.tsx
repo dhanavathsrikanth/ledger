@@ -104,15 +104,15 @@ export const Header: React.FC<HeaderProps> = ({
     <header className="bg-white/95 backdrop-blur-md border-b border-slate-200/90 sticky top-0 z-30 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         {/* Main top bar */}
-        <div className="flex items-center justify-between py-2.5 sm:py-3 gap-2 sm:gap-4">
+        <div className="flex items-center justify-between py-3 gap-2 sm:gap-4">
           {/* Logo & Cloud Badge */}
           <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold text-base sm:text-lg shadow-sm shrink-0 font-['Outfit']">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-semibold text-base sm:text-lg shadow-sm shrink-0">
               ₹
             </div>
             <div>
               <div className="flex items-center gap-1.5 sm:gap-2">
-                <span className="text-base sm:text-xl font-bold tracking-tight text-slate-900 font-['Outfit']">
+                <span className="text-[15px] sm:text-lg font-semibold tracking-tight text-slate-900">
                   Ledger
                 </span>
                 <div 
@@ -130,7 +130,7 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* Month Switcher (Center on desktop) */}
-          <div className="flex items-center gap-1.5 bg-slate-100/90 p-1 rounded-xl border border-slate-200/70 shadow-2xs">
+          <div className="flex items-center gap-1.5 bg-slate-100/90 p-1 rounded-lg border border-slate-200/70 shadow-2xs">
             <button
               onClick={handlePrevMonth}
               aria-label="Previous Month"
@@ -139,7 +139,7 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <div className="px-1.5 sm:px-3 text-xs sm:text-sm font-bold text-slate-900 tracking-tight text-center min-w-[95px] sm:min-w-[130px] font-['Outfit'] truncate">
+            <div className="px-1.5 sm:px-3 text-[13px] sm:text-sm font-semibold text-slate-900 tracking-tight text-center min-w-[95px] sm:min-w-[130px] truncate">
               {monthLabel}
             </div>
             <button
@@ -154,7 +154,7 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 onClick={handleJumpToCurrentMonth}
                 title="Jump to Current Month"
-                className="hidden md:inline-flex items-center gap-1 ml-1 px-2 py-1 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 text-[11px] font-bold transition"
+                className="hidden md:inline-flex items-center gap-1 ml-1 px-2 py-1 rounded-md bg-blue-50 text-blue-700 hover:bg-blue-100 text-[12px] font-medium transition"
               >
                 <Calendar className="w-3 h-3" />
                 <span>Today</span>
@@ -168,7 +168,7 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               onClick={onOpenBudgetModal}
               id="header-budget-btn"
-              className="hidden lg:inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-200/90 rounded-xl hover:bg-slate-50 transition shadow-2xs"
+              className="hidden lg:inline-flex items-center gap-1.5 h-9 px-3 text-[13px] font-medium text-slate-700 bg-white border border-slate-200/90 rounded-lg hover:bg-slate-50 transition shadow-2xs"
               title="Adjust category and overall monthly budget ceilings"
             >
               <SlidersHorizontal className="w-3.5 h-3.5 text-slate-500" />
@@ -179,7 +179,7 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               onClick={onExportCSV}
               id="header-export-btn"
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-200/90 rounded-xl hover:bg-slate-50 transition shadow-2xs"
+              className="hidden sm:inline-flex items-center gap-1.5 h-9 px-3 text-[13px] font-medium text-slate-700 bg-white border border-slate-200/90 rounded-lg hover:bg-slate-50 transition shadow-2xs"
               title="Export all transactions as CSV"
             >
               <Download className="w-3.5 h-3.5 text-slate-500" />
@@ -190,7 +190,7 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               onClick={onOpenAddModal}
               id="header-add-tx-btn"
-              className="inline-flex items-center gap-1.5 px-3 sm:px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-xl transition shadow-xs hover:shadow-sm"
+              className="inline-flex items-center gap-1.5 h-9 px-3 sm:px-4 text-[13px] font-medium text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-lg transition shadow-xs hover:shadow-sm"
             >
               <Plus className="w-4 h-4 stroke-[2.5]" />
               <span>Add</span>
@@ -203,7 +203,7 @@ export const Header: React.FC<HeaderProps> = ({
                 <button
                   onClick={() => setShowAuthMenu(!showAuthMenu)}
                   id="user-account-menu-btn"
-                  className="flex items-center gap-1.5 p-1 sm:px-2.5 sm:py-1.5 bg-slate-100/90 hover:bg-slate-200/80 rounded-xl border border-slate-200/70 text-xs font-semibold text-slate-800 transition"
+                  className="flex items-center gap-1.5 p-1 sm:px-2.5 sm:py-1.5 bg-slate-100/90 hover:bg-slate-200/80 rounded-lg border border-slate-200/70 text-[13px] font-medium text-slate-800 transition"
                   title={currentUser.displayName || currentUser.email || 'Cloud Account'}
                 >
                   {currentUser.photoURL ? (
@@ -214,7 +214,7 @@ export const Header: React.FC<HeaderProps> = ({
                       referrerPolicy="no-referrer"
                     />
                   ) : (
-                    <div className="w-6 h-6 rounded-lg bg-slate-900 text-white flex items-center justify-center text-[10px] font-bold font-['Outfit']">
+                    <div className="w-6 h-6 rounded-lg bg-slate-900 text-white flex items-center justify-center text-[11px] font-semibold">
                       {(currentUser.displayName || currentUser.email || 'U')[0].toUpperCase()}
                     </div>
                   )}
@@ -226,7 +226,7 @@ export const Header: React.FC<HeaderProps> = ({
 
               {/* Account Dropdown Menu */}
               {showAuthMenu && currentUser && (
-                <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-200/90 py-2.5 z-50 text-xs animate-slideUp">
+                <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-slate-200/90 py-2 z-50 text-[13px] animate-slideUp">
                   <div className="px-4 py-2 border-b border-slate-100">
                     <p className="font-bold text-slate-900 truncate">
                       {currentUser.displayName || 'Private Vault User'}
@@ -277,7 +277,7 @@ export const Header: React.FC<HeaderProps> = ({
                     <button
                       onClick={handleLogout}
                       disabled={isAuthLoading}
-                      className="w-full px-4 py-2 text-left text-slate-700 hover:bg-slate-100 flex items-center gap-2 font-semibold transition"
+                      className="w-full px-4 py-2 text-left text-slate-700 hover:bg-slate-100 flex items-center gap-2 font-medium transition"
                     >
                       {isAuthLoading ? (
                         <Loader2 className="w-4 h-4 animate-spin text-slate-500" />
@@ -294,10 +294,10 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Desktop Tab Navigation Bar */}
-        <div className="hidden sm:flex items-center gap-1 pt-1 pb-2 border-t border-slate-100 overflow-x-auto">
+        <div className="hidden sm:flex items-center gap-1 pt-2 pb-2.5 border-t border-slate-100 overflow-x-auto">
           <button
             onClick={() => onTabChange('dashboard')}
-            className={`flex items-center gap-2 px-3.5 py-2 text-xs font-bold rounded-xl transition whitespace-nowrap ${
+            className={`flex items-center gap-2 px-3 py-1.5 text-[13px] font-medium rounded-lg transition whitespace-nowrap ${
               activeTab === 'dashboard'
                 ? 'bg-slate-900 text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
@@ -309,7 +309,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => onTabChange('transactions')}
-            className={`flex items-center gap-2 px-3.5 py-2 text-xs font-bold rounded-xl transition whitespace-nowrap ${
+            className={`flex items-center gap-2 px-3 py-1.5 text-[13px] font-medium rounded-lg transition whitespace-nowrap ${
               activeTab === 'transactions'
                 ? 'bg-slate-900 text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
@@ -321,7 +321,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => onTabChange('reports')}
-            className={`flex items-center gap-2 px-3.5 py-2 text-xs font-bold rounded-xl transition whitespace-nowrap ${
+            className={`flex items-center gap-2 px-3 py-1.5 text-[13px] font-medium rounded-lg transition whitespace-nowrap ${
               activeTab === 'reports'
                 ? 'bg-slate-900 text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
@@ -333,7 +333,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => onTabChange('budgets')}
-            className={`flex items-center gap-2 px-3.5 py-2 text-xs font-bold rounded-xl transition whitespace-nowrap ${
+            className={`flex items-center gap-2 px-3 py-1.5 text-[13px] font-medium rounded-lg transition whitespace-nowrap ${
               activeTab === 'budgets'
                 ? 'bg-slate-900 text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'

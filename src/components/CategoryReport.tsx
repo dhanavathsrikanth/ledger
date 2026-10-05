@@ -72,7 +72,7 @@ export const CategoryReport: React.FC<CategoryReportProps> = ({
           <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
             Total Tracked Expense
           </span>
-          <div className="text-2xl font-extrabold text-slate-900 mt-1 font-['Outfit']">
+          <div className="text-2xl font-semibold font-mono tabular-nums text-slate-900 mt-1">
             {formatCurrency(stats.totalExpense)}
           </div>
           <p className="text-xs text-slate-500 mt-2">
@@ -112,7 +112,7 @@ export const CategoryReport: React.FC<CategoryReportProps> = ({
           <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
             Average Ticket Size
           </span>
-          <div className="text-2xl font-extrabold text-slate-900 mt-1 font-['Outfit']">
+          <div className="text-2xl font-semibold font-mono tabular-nums text-slate-900 mt-1">
             {formatCurrency(
               stats.categorySpendings.reduce((sum, c) => sum + c.transactionCount, 0) > 0
                 ? stats.totalExpense / stats.categorySpendings.reduce((sum, c) => sum + c.transactionCount, 0)
@@ -129,7 +129,7 @@ export const CategoryReport: React.FC<CategoryReportProps> = ({
       <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div className="p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h3 className="text-base font-bold text-slate-900 font-['Outfit']">
+            <h3 className="text-base font-semibold text-slate-900">
               Category Spending &amp; Budget Variance Report
             </h3>
             <p className="text-xs text-slate-500">
@@ -188,7 +188,7 @@ export const CategoryReport: React.FC<CategoryReportProps> = ({
                         <CategoryIcon name={cat.icon} className="w-4 h-4" />
                       </span>
                       <div>
-                        <span className="font-bold text-slate-900 text-sm block">
+                        <span className="font-semibold text-slate-900 text-sm block">
                           {cat.categoryName}
                         </span>
                         <span className="text-[11px] text-slate-500">
@@ -197,7 +197,7 @@ export const CategoryReport: React.FC<CategoryReportProps> = ({
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-extrabold text-sm text-slate-900 font-['Outfit']">
+                      <div className="font-semibold font-mono tabular-nums text-sm text-slate-900">
                         {formatCurrency(cat.totalSpent)}
                       </div>
                       <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
@@ -243,7 +243,7 @@ export const CategoryReport: React.FC<CategoryReportProps> = ({
                   <div className="flex items-center justify-end pt-1">
                     <button
                       onClick={() => onFilterByCategory(cat.categoryId)}
-                      className="text-xs font-bold text-blue-600 hover:text-blue-800 transition inline-flex items-center gap-1"
+                      className="text-[13px] font-medium text-blue-600 hover:text-blue-800 transition inline-flex items-center gap-1"
                     >
                       <span>Filter in Ledger</span>
                       <ExternalLink className="w-3 h-3" />
@@ -339,7 +339,7 @@ export const CategoryReport: React.FC<CategoryReportProps> = ({
                           </div>
                         </div>
                       </td>
-                      <td className="py-3 px-4 font-bold text-slate-900">
+                      <td className="py-3 px-4 font-semibold text-slate-900">
                         {formatCurrency(cat.totalSpent)}
                       </td>
                       <td className="py-3 px-4">
@@ -431,7 +431,7 @@ export const CategoryReport: React.FC<CategoryReportProps> = ({
       <div className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-base font-bold text-slate-900 font-['Outfit']">
+            <h3 className="text-base font-semibold text-slate-900">
               Spending by Payment Method
             </h3>
             <p className="text-xs text-slate-500">
@@ -445,7 +445,7 @@ export const CategoryReport: React.FC<CategoryReportProps> = ({
           {paymentBreakdown.map((pm) => (
             <div key={pm.method} className="p-3.5 rounded-lg bg-slate-50 border border-slate-100">
               <div className="text-xs font-semibold text-slate-600 mb-1">{pm.label}</div>
-              <div className="text-lg font-bold text-slate-900 font-['Outfit']">
+              <div className="text-lg font-semibold text-slate-900">
                 {formatCurrency(pm.total)}
               </div>
               <div className="mt-2 flex items-center justify-between text-[11px] text-slate-500">

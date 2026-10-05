@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { Transaction, TransactionType, PaymentMethod } from '../types';
 import { ALL_CATEGORIES, getCategoryById } from '../data/categories';
-import { formatCurrency, formatMonthYear } from '../utils/calculations';
+import { formatCurrency, formatMonthYear, formatTimeIST, latestFirst, oldestFirst } from '../utils/calculations';
 import { CategoryIcon } from './CategoryIcon';
 
 interface TransactionListProps {
@@ -81,10 +81,11 @@ export const TransactionList: React.FC<TransactionListProps> = ({
       }
       return true;
     }).sort((a, b) => {
-      if (sortBy === 'date_desc') return b.date.localeCompare(a.date);
-      if (sortBy === 'date_asc') return a.date.localeCompare(b.date);
-      if (sortBy === 'amount_desc') return b.amount - a.amount;
-      if (sortBy === 'amount_asc') return a.amount - b.amount;
+      // Same-day records fall back to createdAt so the newest entry stays on top
+      if (sortBy === 'date_desc') return latestFirst(a, b);
+      if (sortBy === 'date_asc') return oldestFirst(a, b);
+      if (sortBy === 'amount_desc') return (b.amount - a.amount) || latestFirst(a, b);
+      if (sortBy === 'amount_asc') return (a.amount - b.amount) || latestFirst(a, b);
       return 0;
     });
   }, [transactions, selectedMonthKey, typeFilter, categoryFilter, paymentFilter, searchTerm, sortBy]);
@@ -113,22 +114,22 @@ export const TransactionList: React.FC<TransactionListProps> = ({
   const hasActiveFilters = searchTerm || typeFilter !== 'all' || categoryFilter !== 'all' || paymentFilter !== 'all';
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] overflow-hidden">
+    <div className="bg-white rounded-xl border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] overflow-hidden">
       {/* Search & Filter Header Bar */}
       <div className="p-4 sm:p-5 border-b border-slate-200/80 space-y-3.5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h3 className="text-base sm:text-lg font-bold text-slate-900 font-['Outfit']">
+            <h3 className="text-[15px] sm:text-base font-semibold tracking-tight text-slate-900">
               Monthly Transactions Ledger
             </h3>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-[13px] text-slate-500 mt-0.5">
               Showing {filteredTransactions.length} recorded entry for {formatMonthYear(selectedMonthKey)}
             </p>
           </div>
 
           <button
             onClick={() => onOpenAddModal(categoryFilter !== 'all' ? categoryFilter : undefined)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-xl transition shadow-xs self-start sm:self-auto"
+            className="inline-flex items-center gap-1.5 h-9 px-3.5 text-[13px] font-medium text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-lg transition shadow-xs self-start sm:self-auto"
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>Add Transaction</span>
@@ -145,7 +146,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({
               placeholder="Search description, note, or category..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-8 py-2 text-xs bg-slate-50/80 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition font-medium"
+              className="w-full pl-9 pr-8 py-2 text-[13px] bg-slate-50/80 border border-slate-200 rounded-lg focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
             />
             {searchTerm && (
               <button
@@ -162,7 +163,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value as any)}
-              className="w-full px-3 py-2 text-xs bg-slate-50/80 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-slate-700 font-semibold"
+              className="w-full px-3 py-2 text-[13px] bg-slate-50/80 border border-slate-200 rounded-lg focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-slate-700 font-medium"
             >
               <option value="all">All Types</option>
               <option value="expense">Expenses Only</option>
@@ -175,7 +176,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="w-full px-3 py-2 text-xs bg-slate-50/80 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-slate-700 font-semibold"
+              className="w-full px-3 py-2 text-[13px] bg-slate-50/80 border border-slate-200 rounded-lg focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-slate-700 font-medium"
             >
               <option value="all">All Categories</option>
               {ALL_CATEGORIES.map((cat) => (
@@ -192,7 +193,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="w-full px-3 py-2 text-xs bg-slate-50/80 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-slate-700 font-semibold"
+              className="w-full px-3 py-2 text-[13px] bg-slate-50/80 border border-slate-200 rounded-lg focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-slate-700 font-medium"
             >
               <option value="date_desc">Date: Newest First</option>
               <option value="date_asc">Date: Oldest First</option>
@@ -207,7 +208,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({
           <div className="flex items-center gap-2 pt-1 flex-wrap text-xs">
             <span className="text-slate-400 font-medium text-[11px]">Filtered by:</span>
             {categoryFilter !== 'all' && (
-              <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded-full font-bold text-[11px]">
+              <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded-full font-medium text-[11px]">
                 {getCategoryById(categoryFilter).name}
                 <X 
                   className="w-3 h-3 cursor-pointer hover:text-blue-950 ml-0.5" 
@@ -219,20 +220,20 @@ export const TransactionList: React.FC<TransactionListProps> = ({
               </span>
             )}
             {typeFilter !== 'all' && (
-              <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-700 border border-slate-200 px-2 py-0.5 rounded-full font-bold text-[11px] capitalize">
+              <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-700 border border-slate-200 px-2 py-0.5 rounded-full font-medium text-[11px] capitalize">
                 {typeFilter}
                 <X className="w-3 h-3 cursor-pointer hover:text-slate-900 ml-0.5" onClick={() => setTypeFilter('all')} />
               </span>
             )}
             {searchTerm && (
-              <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-700 border border-slate-200 px-2 py-0.5 rounded-full font-bold text-[11px]">
+              <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-700 border border-slate-200 px-2 py-0.5 rounded-full font-medium text-[11px]">
                 "{searchTerm}"
                 <X className="w-3 h-3 cursor-pointer hover:text-slate-900 ml-0.5" onClick={() => setSearchTerm('')} />
               </span>
             )}
             <button
               onClick={clearAllFilters}
-              className="text-blue-600 hover:text-blue-800 font-bold text-[11px] ml-1"
+              className="text-blue-600 hover:text-blue-800 font-medium text-[11px] ml-1"
             >
               Reset Filters
             </button>
@@ -243,9 +244,9 @@ export const TransactionList: React.FC<TransactionListProps> = ({
       {/* Filtered Summary Bar */}
       <div className="px-4 sm:px-5 py-2.5 bg-slate-50/70 border-b border-slate-200/80 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600">
         <div className="flex items-center gap-3 sm:gap-5 flex-wrap font-medium">
-          <span>Inflow: <strong className="text-emerald-700 font-extrabold">{formatCurrency(totalFilteredSum.inc)}</strong></span>
-          <span>Outflow: <strong className="text-rose-700 font-extrabold">{formatCurrency(totalFilteredSum.exp)}</strong></span>
-          <span>Net: <strong className={totalFilteredSum.net >= 0 ? 'text-indigo-700 font-extrabold' : 'text-amber-700 font-extrabold'}>{formatCurrency(totalFilteredSum.net)}</strong></span>
+          <span>Inflow: <strong className="text-emerald-700 font-semibold font-mono tabular-nums">{formatCurrency(totalFilteredSum.inc)}</strong></span>
+          <span>Outflow: <strong className="text-rose-700 font-semibold font-mono tabular-nums">{formatCurrency(totalFilteredSum.exp)}</strong></span>
+          <span>Net: <strong className={`font-semibold font-mono tabular-nums ${totalFilteredSum.net >= 0 ? 'text-indigo-700' : 'text-amber-700'}`}>{formatCurrency(totalFilteredSum.net)}</strong></span>
         </div>
         <span className="text-slate-400 text-[11px] hidden sm:inline">Click any row to edit details</span>
       </div>
@@ -265,14 +266,14 @@ export const TransactionList: React.FC<TransactionListProps> = ({
               {hasActiveFilters && (
                 <button
                   onClick={clearAllFilters}
-                  className="px-3.5 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition"
+                  className="h-9 px-3.5 text-[13px] font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition"
                 >
                   Clear Filters
                 </button>
               )}
               <button
                 onClick={() => onOpenAddModal()}
-                className="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition shadow-xs"
+                className="inline-flex items-center gap-1.5 h-9 px-4 text-[13px] font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition shadow-xs"
               >
                 <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
                 <span>Add Transaction</span>
@@ -301,7 +302,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({
 
                   <div className="min-w-0">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-bold text-slate-900 text-sm truncate max-w-[200px] sm:max-w-md group-hover:text-blue-600 transition">
+                      <span className="font-medium text-slate-900 text-sm truncate max-w-[200px] sm:max-w-md group-hover:text-blue-600 transition">
                         {tx.title}
                       </span>
                       {tx.isRecurring && (
@@ -312,9 +313,17 @@ export const TransactionList: React.FC<TransactionListProps> = ({
                     </div>
 
                     <div className="flex items-center gap-1.5 sm:gap-2 mt-0.5 text-xs text-slate-500 flex-wrap">
-                      <span className="font-semibold text-slate-600">{category.name}</span>
+                      <span className="font-medium text-slate-600">{category.name}</span>
                       <span>&bull;</span>
                       <span className="font-medium text-slate-500">{new Date(tx.date + 'T00:00:00').toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                      {formatTimeIST(tx.createdAt) && (
+                        <>
+                          <span>&bull;</span>
+                          <span className="font-semibold text-blue-500 tabular-nums">
+                            {formatTimeIST(tx.createdAt)}
+                          </span>
+                        </>
+                      )}
                       <span>&bull;</span>
                       <span className="capitalize font-medium text-slate-400">{tx.paymentMethod.replace('_', ' ')}</span>
                       {tx.note && (
@@ -331,13 +340,13 @@ export const TransactionList: React.FC<TransactionListProps> = ({
                 <div className="flex items-center gap-3 sm:gap-4 shrink-0 ml-3">
                   <div className="text-right">
                     <div
-                      className={`text-sm sm:text-base font-extrabold font-['Outfit'] tracking-tight ${
+                      className={`text-sm sm:text-[15px] font-semibold font-mono tabular-nums tracking-tight ${
                         isIncome ? 'text-emerald-600' : 'text-slate-900'
                       }`}
                     >
                       {isIncome ? '+' : '-'}{formatCurrency(tx.amount)}
                     </div>
-                    <span className="text-[10px] text-slate-400 font-semibold block uppercase tracking-wider">
+                    <span className="text-[10px] text-slate-400 font-medium block uppercase tracking-wider">
                       {isIncome ? 'Inflow' : 'Expense'}
                     </span>
                   </div>

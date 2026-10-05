@@ -65,16 +65,16 @@ export const MarketingPage: React.FC<MarketingPageProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col font-['Inter',sans-serif]">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col font-sans">
       {/* Top Navigation */}
       <header className="border-b border-slate-200/80 bg-white/95 backdrop-blur-md sticky top-0 z-40">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold text-lg shadow-xs font-['Outfit']">
+            <div className="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center font-semibold text-lg shadow-xs">
               ₹
             </div>
             <div>
-              <span className="text-base sm:text-lg font-bold tracking-tight text-slate-900 font-['Outfit']">
+              <span className="text-base sm:text-lg font-semibold tracking-tight text-slate-900">
                 Ledger
               </span>
               <span className="hidden sm:inline-block ml-2 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
@@ -87,7 +87,7 @@ export const MarketingPage: React.FC<MarketingPageProps> = ({
             <button
               onClick={handleGuestClick}
               disabled={loadingType !== null || isAuthLoading}
-              className="text-xs font-bold text-slate-600 hover:text-slate-900 px-3.5 py-2 rounded-xl hover:bg-slate-100 transition inline-flex items-center gap-1.5"
+              className="text-[13px] font-medium text-slate-600 hover:text-slate-900 h-9 px-3.5 rounded-lg hover:bg-slate-100 transition inline-flex items-center gap-1.5"
             >
               {loadingType === 'guest' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
               <span>Explore Demo</span>
@@ -95,7 +95,7 @@ export const MarketingPage: React.FC<MarketingPageProps> = ({
             <button
               onClick={handleGoogleClick}
               disabled={loadingType !== null || isAuthLoading}
-              className="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 rounded-xl transition shadow-xs"
+              className="inline-flex items-center gap-2 h-9 px-4 text-[13px] font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition shadow-xs"
             >
               {loadingType === 'google' ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -124,7 +124,7 @@ export const MarketingPage: React.FC<MarketingPageProps> = ({
                 <p className="font-semibold">{errorMessage}</p>
                 <button 
                   onClick={handleGuestClick}
-                  className="mt-1 font-bold text-blue-700 hover:underline"
+                  className="mt-1 font-medium text-blue-700 hover:underline"
                 >
                   Click here to proceed instantly with Demo Mode &rarr;
                 </button>
@@ -141,7 +141,7 @@ export const MarketingPage: React.FC<MarketingPageProps> = ({
               <span>Direct Cloud Database &bull; Strictly Private to Your Account</span>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 font-['Outfit'] leading-[1.18] mb-5">
+            <h1 className="text-3xl sm:text-5xl font-semibold tracking-tight text-slate-900 leading-[1.18] mb-5">
               Personal expense management with absolute clarity and privacy.
             </h1>
 
@@ -155,7 +155,7 @@ export const MarketingPage: React.FC<MarketingPageProps> = ({
                 onClick={handleGoogleClick}
                 disabled={loadingType !== null || isAuthLoading}
                 id="hero-google-login-btn"
-                className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-6 py-3 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition shadow-xs hover:shadow-md"
+                className="w-full sm:w-auto flex items-center justify-center gap-2.5 h-11 px-6 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition shadow-xs hover:shadow-md"
               >
                 {loadingType === 'google' ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -199,18 +199,18 @@ export const MarketingPage: React.FC<MarketingPageProps> = ({
           </div>
 
           {/* Interactive UI Mockup Preview */}
-          <div className="mt-12 bg-white border border-slate-200/90 rounded-2xl p-4 sm:p-6 shadow-[0_4px_20px_rgba(0,0,0,0.04)] max-w-4xl mx-auto">
+          <div className="mt-12 bg-white border border-slate-200/90 rounded-xl p-4 sm:p-6 shadow-[0_4px_20px_rgba(0,0,0,0.04)] max-w-4xl mx-auto">
             {/* Window header with tab switcher */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 border-b border-slate-100 mb-5 gap-3">
               <div className="flex items-center gap-2">
                 <span className="w-3 h-3 rounded-full bg-rose-400"></span>
                 <span className="w-3 h-3 rounded-full bg-amber-400"></span>
                 <span className="w-3 h-3 rounded-full bg-emerald-400"></span>
-                <span className="ml-2 text-xs font-bold text-slate-800 font-['Outfit']">Dashboard Demo</span>
+                <span className="ml-2 text-xs font-semibold text-slate-800">Dashboard Demo</span>
               </div>
 
               {/* Preview Mode Switcher */}
-              <div className="flex items-center bg-slate-100/90 p-1 rounded-xl text-xs font-bold border border-slate-200/60 self-start sm:self-auto">
+              <div className="flex items-center bg-slate-100/90 p-1 rounded-lg text-[13px] font-medium border border-slate-200/60 self-start sm:self-auto">
                 <button
                   onClick={() => setPreviewTab('overview')}
                   className={`px-3 py-1 rounded-lg transition ${
@@ -243,23 +243,23 @@ export const MarketingPage: React.FC<MarketingPageProps> = ({
               <div className="space-y-4">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   <div className="p-3.5 bg-slate-50/90 rounded-xl border border-slate-200/70">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Total Inflow</span>
-                    <div className="text-base sm:text-xl font-extrabold text-slate-900 mt-1 font-['Outfit']">₹1,20,000</div>
+                    <span className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">Total Inflow</span>
+                    <div className="text-base sm:text-xl font-semibold font-mono tabular-nums text-slate-900 mt-1">₹1,20,000</div>
                     <span className="text-[10px] text-emerald-600 font-semibold mt-0.5 block">Salary &amp; returns</span>
                   </div>
                   <div className="p-3.5 bg-slate-50/90 rounded-xl border border-slate-200/70">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Total Outflow</span>
-                    <div className="text-base sm:text-xl font-extrabold text-slate-900 mt-1 font-['Outfit']">₹42,500</div>
+                    <span className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">Total Outflow</span>
+                    <div className="text-base sm:text-xl font-semibold font-mono tabular-nums text-slate-900 mt-1">₹42,500</div>
                     <span className="text-[10px] text-slate-500 font-semibold mt-0.5 block">18 expenses logged</span>
                   </div>
                   <div className="p-3.5 bg-slate-50/90 rounded-xl border border-slate-200/70">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Net Balance</span>
-                    <div className="text-base sm:text-xl font-extrabold text-indigo-600 mt-1 font-['Outfit']">+₹77,500</div>
+                    <span className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">Net Balance</span>
+                    <div className="text-base sm:text-xl font-semibold font-mono tabular-nums text-indigo-600 mt-1">+₹77,500</div>
                     <span className="text-[10px] text-indigo-600 font-semibold mt-0.5 block">64.6% savings rate</span>
                   </div>
                   <div className="p-3.5 bg-slate-50/90 rounded-xl border border-slate-200/70">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Safe Daily Burn</span>
-                    <div className="text-base sm:text-xl font-extrabold text-blue-600 mt-1 font-['Outfit']">₹1,850/d</div>
+                    <span className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">Safe Daily Burn</span>
+                    <div className="text-base sm:text-xl font-semibold font-mono tabular-nums text-blue-600 mt-1">₹1,850/d</div>
                     <span className="text-[10px] text-blue-600 font-semibold mt-0.5 block">14 days left in month</span>
                   </div>
                 </div>
@@ -267,8 +267,8 @@ export const MarketingPage: React.FC<MarketingPageProps> = ({
                 {/* Mini chart visual bar */}
                 <div className="p-4 bg-slate-50/70 rounded-xl border border-slate-200/60">
                   <div className="flex items-center justify-between text-xs mb-2">
-                    <span className="font-bold text-slate-800">Monthly Spending Ceiling Utilization</span>
-                    <span className="font-extrabold text-slate-700">₹42,500 / ₹60,000 (71%)</span>
+                    <span className="font-semibold text-slate-800">Monthly Spending Ceiling Utilization</span>
+                    <span className="font-semibold font-mono tabular-nums text-slate-700">₹42,500 / ₹60,000 (71%)</span>
                   </div>
                   <div className="w-full bg-slate-200/70 rounded-full h-2 overflow-hidden">
                     <div className="bg-emerald-500 h-full rounded-full w-[71%]" />
@@ -286,12 +286,12 @@ export const MarketingPage: React.FC<MarketingPageProps> = ({
                       🛒
                     </div>
                     <div>
-                      <p className="font-bold text-slate-900">Weekly Groceries &amp; Provisions</p>
+                      <p className="font-semibold text-slate-900">Weekly Groceries &amp; Provisions</p>
                       <p className="text-[11px] text-slate-500 font-medium">Food &bull; Today &bull; UPI</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="font-extrabold text-slate-900 font-['Outfit'] text-sm">-₹3,250</span>
+                    <span className="font-semibold font-mono tabular-nums text-slate-900 text-sm">-₹3,250</span>
                     <span className="text-[10px] text-rose-600 font-bold block">Expense</span>
                   </div>
                 </div>
@@ -302,12 +302,12 @@ export const MarketingPage: React.FC<MarketingPageProps> = ({
                       💼
                     </div>
                     <div>
-                      <p className="font-bold text-slate-900">Consulting Milestone Invoice</p>
+                      <p className="font-semibold text-slate-900">Consulting Milestone Invoice</p>
                       <p className="text-[11px] text-slate-500 font-medium">Income &bull; Yesterday &bull; Net Banking</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="font-extrabold text-emerald-600 font-['Outfit'] text-sm">+₹35,000</span>
+                    <span className="font-semibold font-mono tabular-nums text-emerald-600 text-sm">+₹35,000</span>
                     <span className="text-[10px] text-emerald-600 font-bold block">Inflow</span>
                   </div>
                 </div>
@@ -318,12 +318,12 @@ export const MarketingPage: React.FC<MarketingPageProps> = ({
                       ⛽
                     </div>
                     <div>
-                      <p className="font-bold text-slate-900">Vehicle Fuel Refill</p>
+                      <p className="font-semibold text-slate-900">Vehicle Fuel Refill</p>
                       <p className="text-[11px] text-slate-500 font-medium">Transportation &bull; 2 days ago &bull; Credit Card</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="font-extrabold text-slate-900 font-['Outfit'] text-sm">-₹2,100</span>
+                    <span className="font-semibold font-mono tabular-nums text-slate-900 text-sm">-₹2,100</span>
                     <span className="text-[10px] text-rose-600 font-bold block">Expense</span>
                   </div>
                 </div>
@@ -334,7 +334,7 @@ export const MarketingPage: React.FC<MarketingPageProps> = ({
             {previewTab === 'insights' && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div className="p-3.5 bg-slate-50/90 rounded-xl border border-slate-200/70">
-                  <div className="flex items-center gap-1.5 font-bold text-slate-900 mb-1 font-['Outfit']">
+                  <div className="flex items-center gap-1.5 font-semibold text-slate-900 mb-1">
                     <Flame className="w-3.5 h-3.5 text-orange-500" />
                     <span>Top Outflow Driver</span>
                   </div>
@@ -343,7 +343,7 @@ export const MarketingPage: React.FC<MarketingPageProps> = ({
                   </p>
                 </div>
                 <div className="p-3.5 bg-slate-50/90 rounded-xl border border-slate-200/70">
-                  <div className="flex items-center gap-1.5 font-bold text-slate-900 mb-1 font-['Outfit']">
+                  <div className="flex items-center gap-1.5 font-semibold text-slate-900 mb-1">
                     <TrendingUp className="w-3.5 h-3.5 text-emerald-600" />
                     <span>Savings Health Score</span>
                   </div>
@@ -360,7 +360,7 @@ export const MarketingPage: React.FC<MarketingPageProps> = ({
         <section className="py-16 bg-white border-y border-slate-200/80">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-2xl mx-auto mb-12">
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-['Outfit']">
+              <h2 className="text-2xl sm:text-3xl font-semibold text-slate-900">
                 Built strictly for privacy and ease of use
               </h2>
               <p className="text-sm text-slate-600 mt-2">
@@ -370,57 +370,57 @@ export const MarketingPage: React.FC<MarketingPageProps> = ({
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Card 1 */}
-              <div className="p-6 bg-slate-50/80 rounded-2xl border border-slate-200/80 flex flex-col justify-between hover:border-slate-300 transition">
+              <div className="p-6 bg-slate-50/80 rounded-xl border border-slate-200/80 flex flex-col justify-between hover:border-slate-300 transition">
                 <div>
                   <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center mb-4">
                     <Database className="w-5 h-5" />
                   </div>
-                  <h3 className="text-base font-bold text-slate-900 mb-2 font-['Outfit']">
+                  <h3 className="text-base font-semibold text-slate-900 mb-2">
                     Direct Cloud Storage
                   </h3>
                   <p className="text-xs text-slate-600 leading-relaxed">
                     No manual sync buttons or data conflicts. Every transaction directly updates your isolated Firestore cloud database in real time.
                   </p>
                 </div>
-                <div className="mt-4 pt-4 border-t border-slate-200/60 text-[11px] font-bold text-blue-700 flex items-center gap-1">
+                <div className="mt-4 pt-4 border-t border-slate-200/60 text-[11px] font-medium text-blue-700 flex items-center gap-1">
                   <span>Instant cloud durability</span>
                   <ArrowRight className="w-3 h-3" />
                 </div>
               </div>
 
               {/* Card 2 */}
-              <div className="p-6 bg-slate-50/80 rounded-2xl border border-slate-200/80 flex flex-col justify-between hover:border-slate-300 transition">
+              <div className="p-6 bg-slate-50/80 rounded-xl border border-slate-200/80 flex flex-col justify-between hover:border-slate-300 transition">
                 <div>
                   <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center mb-4">
                     <Lock className="w-5 h-5" />
                   </div>
-                  <h3 className="text-base font-bold text-slate-900 mb-2 font-['Outfit']">
+                  <h3 className="text-base font-semibold text-slate-900 mb-2">
                     Strict User Isolation
                   </h3>
                   <p className="text-xs text-slate-600 leading-relaxed">
                     Only authenticated users can add or see their data. Security rules at the database engine enforce strict privacy for all your transactions.
                   </p>
                 </div>
-                <div className="mt-4 pt-4 border-t border-slate-200/60 text-[11px] font-bold text-emerald-700 flex items-center gap-1">
+                <div className="mt-4 pt-4 border-t border-slate-200/60 text-[11px] font-medium text-emerald-700 flex items-center gap-1">
                   <span>Zero data leakage</span>
                   <ArrowRight className="w-3 h-3" />
                 </div>
               </div>
 
               {/* Card 3 */}
-              <div className="p-6 bg-slate-50/80 rounded-2xl border border-slate-200/80 flex flex-col justify-between hover:border-slate-300 transition">
+              <div className="p-6 bg-slate-50/80 rounded-xl border border-slate-200/80 flex flex-col justify-between hover:border-slate-300 transition">
                 <div>
                   <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center mb-4">
                     <SlidersHorizontal className="w-5 h-5" />
                   </div>
-                  <h3 className="text-base font-bold text-slate-900 mb-2 font-['Outfit']">
+                  <h3 className="text-base font-semibold text-slate-900 mb-2">
                     Budget Caps &amp; Pacing
                   </h3>
                   <p className="text-xs text-slate-600 leading-relaxed">
                     Set overall monthly spending limits or category-specific limits. Get safe daily burn alerts before you exceed your target.
                   </p>
                 </div>
-                <div className="mt-4 pt-4 border-t border-slate-200/60 text-[11px] font-bold text-purple-700 flex items-center gap-1">
+                <div className="mt-4 pt-4 border-t border-slate-200/60 text-[11px] font-medium text-purple-700 flex items-center gap-1">
                   <span>Intelligent burn rate metrics</span>
                   <ArrowRight className="w-3 h-3" />
                 </div>
@@ -432,37 +432,37 @@ export const MarketingPage: React.FC<MarketingPageProps> = ({
         {/* Three Steps */}
         <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-12">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-['Outfit']">
+            <h2 className="text-2xl sm:text-3xl font-semibold text-slate-900">
               Three steps to complete financial awareness
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center sm:text-left">
             <div className="space-y-3">
-              <div className="w-8 h-8 rounded-xl bg-slate-900 text-white font-bold text-xs flex items-center justify-center mx-auto sm:mx-0 font-['Outfit']">
+              <div className="w-8 h-8 rounded-xl bg-slate-900 text-white font-bold text-xs flex items-center justify-center mx-auto sm:mx-0">
                 1
               </div>
-              <h4 className="text-base font-bold text-slate-900 font-['Outfit']">Sign in with Google</h4>
+              <h4 className="text-base font-semibold text-slate-900">Sign in with Google</h4>
               <p className="text-xs text-slate-600 leading-relaxed">
                 Connect securely using Firebase Authentication. Your unique user ID instantly maps to your private collection.
               </p>
             </div>
 
             <div className="space-y-3">
-              <div className="w-8 h-8 rounded-xl bg-slate-900 text-white font-bold text-xs flex items-center justify-center mx-auto sm:mx-0 font-['Outfit']">
+              <div className="w-8 h-8 rounded-xl bg-slate-900 text-white font-bold text-xs flex items-center justify-center mx-auto sm:mx-0">
                 2
               </div>
-              <h4 className="text-base font-bold text-slate-900 font-['Outfit']">Log Transactions &amp; Budgets</h4>
+              <h4 className="text-base font-semibold text-slate-900">Log Transactions &amp; Budgets</h4>
               <p className="text-xs text-slate-600 leading-relaxed">
                 Add incomes and expenses with categories (Food, Housing, Travel, Bills), payment methods, and notes. Set your budget caps.
               </p>
             </div>
 
             <div className="space-y-3">
-              <div className="w-8 h-8 rounded-xl bg-slate-900 text-white font-bold text-xs flex items-center justify-center mx-auto sm:mx-0 font-['Outfit']">
+              <div className="w-8 h-8 rounded-xl bg-slate-900 text-white font-bold text-xs flex items-center justify-center mx-auto sm:mx-0">
                 3
               </div>
-              <h4 className="text-base font-bold text-slate-900 font-['Outfit']">Monitor Health &amp; Export</h4>
+              <h4 className="text-base font-semibold text-slate-900">Monitor Health &amp; Export</h4>
               <p className="text-xs text-slate-600 leading-relaxed">
                 Analyze interactive charts, monthly balance trends, and export all records to standard CSV files at any time.
               </p>
@@ -474,7 +474,7 @@ export const MarketingPage: React.FC<MarketingPageProps> = ({
         <section className="pb-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
           <div className="bg-slate-900 text-white rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden shadow-lg">
             <div className="relative z-10 max-w-xl mx-auto space-y-4">
-              <h3 className="text-2xl sm:text-3xl font-extrabold font-['Outfit'] tracking-tight">
+              <h3 className="text-2xl sm:text-3xl font-semibold tracking-tight">
                 Ready to master your monthly cash flow?
               </h3>
               <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
@@ -484,7 +484,7 @@ export const MarketingPage: React.FC<MarketingPageProps> = ({
                 <button
                   onClick={handleGoogleClick}
                   disabled={loadingType !== null || isAuthLoading}
-                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-bold text-slate-900 bg-white hover:bg-slate-100 transition shadow-sm text-xs sm:text-sm"
+                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg font-semibold text-slate-900 bg-white hover:bg-slate-100 transition shadow-sm text-sm"
                 >
                   {loadingType === 'google' ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -501,7 +501,7 @@ export const MarketingPage: React.FC<MarketingPageProps> = ({
                 <button
                   onClick={handleGuestClick}
                   disabled={loadingType !== null || isAuthLoading}
-                  className="px-5 py-3.5 rounded-xl font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition text-xs sm:text-sm"
+                  className="px-5 py-3.5 rounded-lg font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition text-sm"
                 >
                   Try Demo First
                 </button>
@@ -515,7 +515,7 @@ export const MarketingPage: React.FC<MarketingPageProps> = ({
       <footer className="border-t border-slate-200/80 bg-white py-6">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-slate-800 font-['Outfit']">Ledger</span>
+            <span className="font-semibold text-slate-800">Ledger</span>
             <span>&bull;</span>
             <span>Firebase Cloud Storage</span>
           </div>

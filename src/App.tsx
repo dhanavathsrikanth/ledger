@@ -160,10 +160,11 @@ export default function App() {
     if (!currentUser) return;
 
     const savedTx: Transaction = existingId
-      ? { ...txData, id: existingId }
+      ? { ...txData, id: existingId, createdAt: txData.createdAt || new Date().toISOString() }
       : {
           ...txData,
           id: `tx-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+          createdAt: txData.createdAt || new Date().toISOString(),
         };
 
     try {
@@ -280,7 +281,7 @@ export default function App() {
 
   // 3. Authenticated state: Render complete Personal Finance Dashboard
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 font-['Plus_Jakarta_Sans'] flex flex-col antialiased selection:bg-blue-100 selection:text-blue-900">
+    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans flex flex-col antialiased selection:bg-blue-100 selection:text-blue-900">
       {/* Top Navigation & App Header */}
       <Header
         currentMonthKey={currentMonthKey}
@@ -296,7 +297,7 @@ export default function App() {
       />
 
       {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6 pb-24 sm:pb-12">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 space-y-5 sm:space-y-6 pb-24 sm:pb-12">
         {/* Core Monthly KPIs */}
         <MetricsCards
           stats={monthlyStats}
@@ -378,24 +379,24 @@ export default function App() {
           onClick={() => setActiveTab('dashboard')}
           className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-lg transition ${
             activeTab === 'dashboard'
-              ? 'text-blue-600 font-bold'
+              ? 'text-blue-600 font-semibold'
               : 'text-slate-500 hover:text-slate-900 font-medium'
           }`}
         >
           <LayoutDashboard className="w-5 h-5" />
-          <span className="text-[10px]">Overview</span>
+          <span className="text-[11px] font-medium">Overview</span>
         </button>
 
         <button
           onClick={() => setActiveTab('transactions')}
           className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-lg transition ${
             activeTab === 'transactions'
-              ? 'text-blue-600 font-bold'
+              ? 'text-blue-600 font-semibold'
               : 'text-slate-500 hover:text-slate-900 font-medium'
           }`}
         >
           <ReceiptText className="w-5 h-5" />
-          <span className="text-[10px]">Ledger</span>
+          <span className="text-[11px] font-medium">Ledger</span>
         </button>
 
         {/* Elevated Quick-Add Action Button */}
@@ -412,24 +413,24 @@ export default function App() {
           onClick={() => setActiveTab('reports')}
           className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-lg transition ${
             activeTab === 'reports'
-              ? 'text-blue-600 font-bold'
+              ? 'text-blue-600 font-semibold'
               : 'text-slate-500 hover:text-slate-900 font-medium'
           }`}
         >
           <PieChart className="w-5 h-5" />
-          <span className="text-[10px]">Reports</span>
+          <span className="text-[11px] font-medium">Reports</span>
         </button>
 
         <button
           onClick={() => setActiveTab('budgets')}
           className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-lg transition ${
             activeTab === 'budgets'
-              ? 'text-blue-600 font-bold'
+              ? 'text-blue-600 font-semibold'
               : 'text-slate-500 hover:text-slate-900 font-medium'
           }`}
         >
           <Target className="w-5 h-5" />
-          <span className="text-[10px]">Budgets</span>
+          <span className="text-[11px] font-medium">Budgets</span>
         </button>
       </nav>
 
@@ -461,7 +462,7 @@ export default function App() {
 
       {/* Toast Feedback */}
       {toastMessage && (
-        <div className="fixed bottom-20 sm:bottom-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2.5 text-xs font-medium border border-slate-800 transition transform animate-slideUp">
+        <div className="fixed bottom-20 sm:bottom-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white px-4 py-2.5 rounded-lg shadow-xl flex items-center gap-2.5 text-[13px] font-medium border border-slate-800 transition transform animate-slideUp">
           {toastMessage.type === 'success' ? (
             <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
           ) : (

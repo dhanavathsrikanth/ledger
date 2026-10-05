@@ -26,14 +26,14 @@ export const BudgetInsightsBanner: React.FC<BudgetInsightsBannerProps> = ({
   );
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+    <div className="bg-white rounded-xl border border-slate-200/80 p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-100">
         <div className="flex items-center gap-2.5 flex-wrap">
           <div className="w-7 h-7 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 border border-indigo-100">
             <Sparkles className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wider font-['Outfit']">
+            <h3 className="text-xs sm:text-sm font-semibold text-slate-900 uppercase tracking-wider">
               Budget Intelligence &amp; Velocity
             </h3>
           </div>
@@ -59,10 +59,10 @@ export const BudgetInsightsBanner: React.FC<BudgetInsightsBannerProps> = ({
         </div>
 
         {stats.overallBudget > 0 && stats.daysRemaining > 0 && stats.remainingBudget > 0 && (
-          <div className="self-start sm:self-auto text-[11px] font-bold text-slate-800 bg-slate-100/90 px-3 py-1 rounded-xl flex items-center gap-1.5 border border-slate-200/60">
+          <div className="self-start sm:self-auto text-[11px] font-semibold text-slate-800 bg-slate-100/90 px-3 py-1 rounded-xl flex items-center gap-1.5 border border-slate-200/60">
             <Flame className="w-3.5 h-3.5 text-amber-500 shrink-0" />
             <span className="text-slate-500 font-medium">Safe Burn:</span>
-            <span className="text-slate-900 font-extrabold">{formatCurrency(stats.safeDailySpend, true)}/day</span>
+            <span className="text-slate-900 font-semibold font-mono tabular-nums">{formatCurrency(stats.safeDailySpend, true)}/day</span>
             <span className="text-slate-400 font-normal">({stats.daysRemaining}d left)</span>
           </div>
         )}
@@ -72,7 +72,7 @@ export const BudgetInsightsBanner: React.FC<BudgetInsightsBannerProps> = ({
         {/* Insight 1: Overall Pace */}
         <div className="p-3.5 rounded-xl bg-slate-50/70 border border-slate-200/60 flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between font-bold text-slate-800 mb-1.5 font-['Outfit']">
+            <div className="flex items-center justify-between font-semibold text-slate-800 mb-1.5">
               <span>Budget Trajectory</span>
               <span className="text-[11px] font-semibold text-slate-500">
                 {stats.overallBudget > 0 ? `${stats.budgetUsedPercentage.toFixed(0)}% consumed` : 'Uncapped'}
@@ -120,7 +120,7 @@ export const BudgetInsightsBanner: React.FC<BudgetInsightsBannerProps> = ({
         {/* Insight 2: Category Spotlight */}
         <div className="p-3.5 rounded-xl bg-slate-50/70 border border-slate-200/60 flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between font-bold text-slate-800 mb-1.5 font-['Outfit']">
+            <div className="flex items-center justify-between font-semibold text-slate-800 mb-1.5">
               <span>Top Outflow Category</span>
               <Flame className="w-3.5 h-3.5 text-orange-500" />
             </div>
@@ -138,7 +138,7 @@ export const BudgetInsightsBanner: React.FC<BudgetInsightsBannerProps> = ({
           {topCategory && onSelectCategory && (
             <button
               onClick={() => onSelectCategory(topCategory.categoryId)}
-              className="mt-2 text-left font-bold text-blue-600 hover:text-blue-800 text-[11px] transition inline-flex items-center gap-1"
+              className="mt-2 text-left font-medium text-blue-600 hover:text-blue-800 text-[11px] transition inline-flex items-center gap-1"
             >
               <span>Filter {topCategory.categoryName} items</span>
               <ArrowRight className="w-3 h-3" />
@@ -149,7 +149,7 @@ export const BudgetInsightsBanner: React.FC<BudgetInsightsBannerProps> = ({
         {/* Insight 3: Category Limit Alerts */}
         <div className="p-3.5 rounded-xl bg-slate-50/70 border border-slate-200/60 flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between font-bold text-slate-800 mb-1.5 font-['Outfit']">
+            <div className="flex items-center justify-between font-semibold text-slate-800 mb-1.5">
               <span>Category Limits Compliance</span>
               <TrendingUp className="w-3.5 h-3.5 text-indigo-500" />
             </div>

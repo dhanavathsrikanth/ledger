@@ -46,7 +46,7 @@ export const BudgetInsightsTab: React.FC<BudgetInsightsTabProps> = ({
           <div>
             <div className="flex items-center gap-2">
               <Target className="w-5 h-5 text-blue-600" />
-              <h3 className="text-lg font-bold text-slate-900 font-['Outfit']">
+              <h3 className="text-lg font-semibold text-slate-900">
                 Monthly Budget Health &amp; Forecast
               </h3>
             </div>
@@ -57,7 +57,7 @@ export const BudgetInsightsTab: React.FC<BudgetInsightsTabProps> = ({
 
           <button
             onClick={onOpenBudgetModal}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition shadow-xs self-start md:self-auto"
+            className="inline-flex items-center gap-1.5 h-9 px-3.5 text-[13px] font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition shadow-xs self-start md:self-auto"
           >
             <SlidersHorizontal className="w-3.5 h-3.5 text-slate-500" />
             <span>Configure Targets</span>
@@ -70,7 +70,7 @@ export const BudgetInsightsTab: React.FC<BudgetInsightsTabProps> = ({
             <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               Total Budget Limit
             </span>
-            <div className="text-2xl font-extrabold text-slate-900 mt-1 font-['Outfit']">
+            <div className="text-2xl font-semibold font-mono tabular-nums text-slate-900 mt-1">
               {stats.overallBudget > 0 ? formatCurrency(stats.overallBudget) : 'Not Set'}
             </div>
             <div className="text-xs text-slate-500 mt-2">
@@ -86,7 +86,7 @@ export const BudgetInsightsTab: React.FC<BudgetInsightsTabProps> = ({
             <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               Remaining Budget
             </span>
-            <div className={`text-2xl font-extrabold mt-1 font-['Outfit'] ${stats.overallBudget === 0 ? 'text-slate-700' : stats.remainingBudget >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+            <div className={`text-2xl font-semibold font-mono tabular-nums mt-1 ${stats.overallBudget === 0 ? 'text-slate-700' : stats.remainingBudget >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
               {stats.overallBudget > 0
                 ? `${stats.remainingBudget >= 0 ? '' : '-'}${formatCurrency(Math.abs(stats.remainingBudget))}`
                 : 'No Cap'}
@@ -102,7 +102,7 @@ export const BudgetInsightsTab: React.FC<BudgetInsightsTabProps> = ({
             <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               Safe Daily Spend
             </span>
-            <div className="text-2xl font-extrabold text-indigo-600 mt-1 font-['Outfit']">
+            <div className="text-2xl font-semibold font-mono tabular-nums text-indigo-600 mt-1">
               {stats.overallBudget > 0 && stats.daysRemaining > 0 && stats.remainingBudget > 0
                 ? formatCurrency(stats.safeDailySpend)
                 : '—'}
@@ -118,7 +118,7 @@ export const BudgetInsightsTab: React.FC<BudgetInsightsTabProps> = ({
             <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               Projected End-of-Month
             </span>
-            <div className={`text-2xl font-extrabold mt-1 font-['Outfit'] ${stats.overallBudget > 0 && projectedVariance < 0 ? 'text-amber-600' : 'text-slate-900'}`}>
+            <div className={`text-2xl font-semibold font-mono tabular-nums mt-1 ${stats.overallBudget > 0 && projectedVariance < 0 ? 'text-amber-600' : 'text-slate-900'}`}>
               {formatCurrency(projectedSpend)}
             </div>
             <div className="text-xs text-slate-500 mt-2">
@@ -162,7 +162,7 @@ export const BudgetInsightsTab: React.FC<BudgetInsightsTabProps> = ({
             </span>
             <button
               onClick={onOpenBudgetModal}
-              className="text-blue-600 hover:text-blue-800 font-bold self-start sm:self-auto"
+              className="text-blue-600 hover:text-blue-800 font-medium self-start sm:self-auto"
             >
               Set Monthly Spending Cap &rarr;
             </button>
@@ -173,7 +173,7 @@ export const BudgetInsightsTab: React.FC<BudgetInsightsTabProps> = ({
       {/* Category Budget Detail Cards */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h4 className="text-base font-bold text-slate-900 font-['Outfit']">
+          <h4 className="text-base font-semibold text-slate-900">
             Category Budget Breakdown &amp; Warnings
           </h4>
           <span className="text-xs text-slate-500">
@@ -201,7 +201,7 @@ export const BudgetInsightsTab: React.FC<BudgetInsightsTabProps> = ({
                         <CategoryIcon name={cat.icon} className="w-4 h-4" />
                       </span>
                       <div>
-                        <h5 className="font-bold text-slate-900 text-xs truncate max-w-[130px]">
+                        <h5 className="font-semibold text-slate-900 text-xs truncate max-w-[130px]">
                           {cat.categoryName}
                         </h5>
                         <span className="text-[11px] text-slate-400">
@@ -224,7 +224,7 @@ export const BudgetInsightsTab: React.FC<BudgetInsightsTabProps> = ({
                   </div>
 
                   <div className="flex items-baseline justify-between mb-1.5">
-                    <span className="text-lg font-bold text-slate-900 font-['Outfit']">
+                    <span className="text-lg font-semibold text-slate-900">
                       {formatCurrency(cat.totalSpent)}
                     </span>
                     <span className="text-xs text-slate-500">
@@ -265,7 +265,7 @@ export const BudgetInsightsTab: React.FC<BudgetInsightsTabProps> = ({
       <div className="bg-slate-900 text-white rounded-xl p-5 shadow-xs">
         <div className="flex items-center gap-2 mb-3">
           <Lightbulb className="w-5 h-5 text-amber-400" />
-          <h4 className="text-sm font-bold uppercase tracking-wider font-['Outfit']">
+          <h4 className="text-sm font-bold uppercase tracking-wider">
             Actionable Financial Insights
           </h4>
         </div>

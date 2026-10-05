@@ -58,10 +58,10 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({
     <div className="space-y-4 sm:space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
         {/* Left Column: Category Spending Distribution */}
-        <div className="lg:col-span-6 bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col justify-between">
+        <div className="lg:col-span-6 bg-white rounded-xl border border-slate-200/80 p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col justify-between">
           <div className="flex items-center justify-between mb-3 sm:mb-4">
             <div>
-              <h3 className="text-sm sm:text-base font-bold text-slate-900 font-['Outfit']">
+              <h3 className="text-sm sm:text-base font-semibold text-slate-900">
                 Category Spending Distribution
               </h3>
               <p className="text-xs text-slate-500">
@@ -147,7 +147,7 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({
                       </span>
                     </div>
                     <div className="text-right shrink-0">
-                      <span className="font-bold text-slate-900 font-['Outfit']">
+                      <span className="font-semibold text-slate-900">
                         {formatCurrency(cat.totalSpent)}
                       </span>
                       <span className="text-[11px] text-slate-400 ml-1 font-medium">
@@ -177,7 +177,7 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({
                         <span className="font-semibold text-slate-800 truncate">{cat.categoryName}</span>
                       </div>
                       <div className="space-x-1 shrink-0 font-medium">
-                        <span className="font-bold text-slate-900">{formatCurrency(cat.totalSpent)}</span>
+                        <span className="font-semibold text-slate-900">{formatCurrency(cat.totalSpent)}</span>
                         <span className="text-slate-400 hidden xs:inline">/ {formatCurrency(cat.budgetLimit)}</span>
                         <span
                           className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
@@ -213,10 +213,10 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({
         </div>
 
         {/* Right Column: 6-Month Income vs Expenditure Trend */}
-        <div className="lg:col-span-6 bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col justify-between">
+        <div className="lg:col-span-6 bg-white rounded-xl border border-slate-200/80 p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col justify-between">
           <div className="flex items-center justify-between mb-3 sm:mb-4">
             <div>
-              <h3 className="text-sm sm:text-base font-bold text-slate-900 font-['Outfit']">
+              <h3 className="text-sm sm:text-base font-semibold text-slate-900">
                 Income vs. Outflow Trend
               </h3>
               <p className="text-xs text-slate-500">
@@ -269,7 +269,7 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({
           <div className="mt-3 pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[11px] sm:text-xs text-slate-500">
             <span>
               6-Month Net Balance:{' '}
-              <strong className="text-indigo-600 font-extrabold">
+              <strong className="text-indigo-600 font-semibold font-mono tabular-nums">
                 {formatCurrency(trends.reduce((acc, t) => acc + t.net, 0))}
               </strong>
             </span>
@@ -286,10 +286,10 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({
       </div>
 
       {/* Full Width: Daily Cumulative Spending vs Budget Benchmark */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+      <div className="bg-white rounded-xl border border-slate-200/80 p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 sm:mb-4 gap-2">
           <div>
-            <h3 className="text-sm sm:text-base font-bold text-slate-900 font-['Outfit']">
+            <h3 className="text-sm sm:text-base font-semibold text-slate-900">
               Daily Cumulative Outflow vs. Budget Benchmark
             </h3>
             <p className="text-xs text-slate-500">
