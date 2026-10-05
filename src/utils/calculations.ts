@@ -22,6 +22,45 @@ export function formatPercent(val: number): string {
   return `${val >= 0 ? '' : '-'}${Math.abs(val).toFixed(1)}%`;
 }
 
+/**
+ * Format a timestamp as IST (Asia/Kolkata) in 12-hour clock, e.g. "5:30 pm".
+ * Returns an empty string when there is no usable timestamp.
+ */
+export function formatTimeIST(iso?: string): string {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return '';
+  return d.toLocaleTimeString('en-IN', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+    timeZone: 'Asia/Kolkata',
+  });
+}
+
+/**
+ * Sort comparator: latest entry first.
+ * Primary: date (YYYY-MM-DD) descending.
+ * Secondary: createdAt (ISO) descending — so entries added later on the
+ * same day appear on top instead of in arbitrary order.
+ * Tertiary: id descending as a stable fallback for records saved before
+ * createdAt existed.
+ */
+export function latestFirst(a: Transaction, b: Transaction): number {
+  if (a.date !== b.date) return b.date.localeCompare(a.date);
+  const aCreated = a.createdAt || '';
+  const bCreated = b.createdAt || '';
+  if (aCreated !== bCreated) return bCreated.localeCompare(aCreated);
+  return String(b.id).localeCompare(String(a.id));
+}
+
+/**
+ * Sort comparator: oldest entry first (inverse of latestFirst).
+ */
+export function oldestFirst(a: Transaction, b: Transaction): number {
+  return -latestFirst(a, b);
+}
+
 export function getMonthName(monthKey: string): string {
   const [yearStr, monthStr] = monthKey.split('-');
   const year = parseInt(yearStr, 10);

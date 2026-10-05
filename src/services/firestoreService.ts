@@ -10,6 +10,7 @@ import {
 } from 'firebase/firestore';
 import { db, auth } from '../lib/firebase';
 import { Transaction, BudgetConfig } from '../types';
+import { latestFirst } from '../utils/calculations';
 
 export enum OperationType {
   CREATE = 'create',
@@ -90,11 +91,14 @@ export function subscribeToTransactions(
         const data = docSnap.data() as Transaction;
         items.push({
           ...data,
-          id: docSnap.id
+          id: docSnap.id,
+          // Legacy records may lack createdAt — fall back to updatedAt so
+          // they still slot into the right place in the latest-first order.
+          createdAt: data.createdAt || data.updatedAt,
         });
       });
-      // Sort in descending order by date
-      items.sort((a, b) => (b.date > a.date ? 1 : b.date < a.date ? -1 : 0));
+      // Latest entry first: date desc, then createdAt desc
+      items.sort(latestFirst);
       onUpdate(items);
     },
     (err) => {

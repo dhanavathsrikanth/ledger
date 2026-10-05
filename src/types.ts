@@ -29,6 +29,8 @@ export interface Transaction {
   paymentMethod: PaymentMethod;
   note?: string;
   isRecurring?: boolean;
+  createdAt?: string; // ISO timestamp of when the record was first created
+  updatedAt?: string; // ISO timestamp of the last edit
 }
 
 export interface BudgetConfig {
